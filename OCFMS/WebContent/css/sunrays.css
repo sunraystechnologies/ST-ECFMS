@@ -1,0 +1,30 @@
+H1 {
+	font-family: 'Helvetica Neue', Helvetica, Arial;
+	font-size: 28px;
+	font-weight: 600;
+	line-height: 32px;
+	word-spacing: 0px;
+	background: 0% 0%;
+	display: block;
+	color: #333333;
+}
+
+H2 {
+	font-size: 20px;
+	font-weight: 600;
+}
+
+H3 {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+TH {
+	text-align: left;
+}
+
+body {
+	font-family: 'Open Sans', Helvetica, Arial;
+	font-size: 14px;
+	color: #555555;
+}
