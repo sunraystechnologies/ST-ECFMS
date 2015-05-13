@@ -13,34 +13,30 @@
 <title>Comment Management</title>
 </head>
 <body>
-<form action="<%=ORSView.COMMENT_CTL%>">
+	<form action="<%=ORSView.COMMENT_CTL%>">
 
 		<%@ include file="Header.jsp"%>
 
-		<jsp:useBean id="model" class="in.co.sunrays.ocha.model.CommentModel" 
-			scope="request"/>
-			
+		<jsp:useBean id="model" class="in.co.sunrays.ocha.model.CommentModel"
+			scope="request" />
+
 		<center>
-		
-			<h1>Comment</h1>
 
-			<H2>
-				<font color="green"> <%=ServletUtility.getSuccessMessage(request)%>
-				</font>
-			</H2>
-			<H2>
-				<font color="red"> <%=ServletUtility.getErrorMessage(request)%>
-				</font>
-			</H2>
+			<p class="st-title">Comment</p>
 
-			<input type="hidden" name="id" value="<%=model.getId()%>">
-			<input type="hidden" name="createdDatetime" value="<%=DataUtility.getTimestamp(model.getCreatedOn())%>">
-			<input type="hidden" name="resourceId" value="<%=model.getResourceId()%>">
-			
+			<%=HTMLUtility.getSuccessMessage(request)%>
+			<%=HTMLUtility.getErrorMessage(request)%>
+
+			<input type="hidden" name="id" value="<%=model.getId()%>"> <input
+				type="hidden" name="createdDatetime"
+				value="<%=DataUtility.getTimestamp(model.getCreatedOn())%>">
+			<input type="hidden" name="resourceId"
+				value="<%=model.getResourceId()%>">
+
 
 			<table>
 
-			<%-- 	 <tr>
+				<%-- 	 <tr>
 					<th>Resource Name*</th>
 					<td><%=HTMLUtility.getList("resourceId",
 					String.valueOf(bean.getResourceId()), l) %></td>
@@ -50,7 +46,7 @@
 					<td><input type="text" name="name" readonly="readonly"
 						value="<%=DataUtility.getStringData(model.getName())%>"></td>
 				</tr>
-				
+
 				<tr>
 					<th>Text*</th>
 					<td><input type="text" name="text"
@@ -60,13 +56,13 @@
 				<tr>
 					<th></th>
 					<td colspan="2">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-						&nbsp; <input type="submit" name="operation" value="<%=BaseCtl.OP_SAVE%>">
-							<%
-				 	if (model.getId() > 0) {
-				 %> &emsp;<input type="submit" name="operation"
+						&nbsp; <input type="submit" name="operation"
+						value="<%=BaseCtl.OP_SAVE%>"> <%
+ 	if (model.getId() > 0) {
+ %> &emsp;<input type="submit" name="operation"
 						value="<%=BaseCtl.OP_DELETE%>"> <%
-				 	}
-				 %>&emsp; <input type="submit" name="operation"
+ 	}
+ %>&emsp; <input type="submit" name="operation"
 						value="<%=BaseCtl.OP_CANCEL%>">
 					</td>
 				</tr>

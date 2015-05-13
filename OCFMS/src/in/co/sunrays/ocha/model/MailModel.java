@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 /**
  * Model contains Comment attributes and its Create, Read, Update and Delete
  * methods.
- *
+ * 
  * @version 1.0
  * @since 01 Feb 2015
  * @author SUNRAYS Developer
@@ -86,7 +86,7 @@ public class MailModel extends BaseModel {
 
 	/**
 	 * Adds a record
-	 *
+	 * 
 	 * @return
 	 * @throws ApplicationException
 	 */
@@ -98,20 +98,24 @@ public class MailModel extends BaseModel {
 			// Get auto-generated next primary key
 			pk = nextPK();
 			conn.setAutoCommit(false); // Begin transaction
-			String sql = "INSERT INTO " + getTableName() + " VALUES(?,?,?,?,?)";
+			String sql = "INSERT INTO ST_MAIL(ID,SENDER,DETAIL,ATTACHMENT,RECEIVER) VALUES(?,?,?,?,?)";
 
 			log.info("SQL : " + sql);
 
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setLong(1, pk);
-			pstmt.setString(2, receiver);
-			pstmt.setString(3, sender);
-			pstmt.setString(4, detail);
-			pstmt.setString(5, attachment);
+			pstmt.setString(2, sender);
+			pstmt.setString(3, detail);
+			pstmt.setString(4, attachment);
+			pstmt.setString(5, receiver);
 
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+
+			this.setId(pk);
+			updateCreatedInfo();
+
 		} catch (Exception e) {
 			log.error("Database Exception..", e);
 			try {
@@ -132,7 +136,7 @@ public class MailModel extends BaseModel {
 
 	/**
 	 * Deletes a record
-	 *
+	 * 
 	 * @throws ApplicationException
 	 */
 	public void delete() throws ApplicationException {
@@ -142,7 +146,7 @@ public class MailModel extends BaseModel {
 		try {
 			conn = JDBCDataSource.getConnection();
 			conn.setAutoCommit(false); // Begin transaction
-			String sql = "DELETE FROM " + getTableName() + " WHERE ID=?";
+			String sql = "DELETE FROM ST_MAIL WHERE ID=?";
 			log.info("SQL : " + sql);
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -169,15 +173,15 @@ public class MailModel extends BaseModel {
 
 	/**
 	 * Finds record by Primary Key ( ID)
-	 *
+	 * 
 	 * @param pk
 	 * @return
 	 * @throws ApplicationException
 	 */
 	public MailModel findByPK(long pk) throws ApplicationException {
 		log.debug("Model findByPk Started");
-		StringBuffer sql = new StringBuffer("SELECT * FROM " + getTableName()
-				+ " WHERE ID=?");
+		StringBuffer sql = new StringBuffer("SELECT * FROM ST_MAIL WHERE ID=?");
+
 		log.info("SQL : " + sql);
 		MailModel model = null;
 		Connection conn = null;
@@ -189,10 +193,10 @@ public class MailModel extends BaseModel {
 			while (rs.next()) {
 				model = new MailModel();
 				model.setId(rs.getLong(1));
-				model.setReceiver(rs.getString(2));
-				model.setSender(rs.getString(3));
-				model.setDetail(rs.getString(4));
-				model.setAttachment(rs.getString(5));
+				model.setSender(rs.getString(2));
+				model.setDetail(rs.getString(3));
+				model.setAttachment(rs.getString(4));
+				model.setReceiver(rs.getString(5));
 			}
 			rs.close();
 		} catch (Exception e) {
@@ -208,7 +212,7 @@ public class MailModel extends BaseModel {
 
 	/**
 	 * Updates a records
-	 *
+	 * 
 	 * @throws ApplicationException
 	 */
 	public void update() throws ApplicationException {
@@ -217,18 +221,20 @@ public class MailModel extends BaseModel {
 		try {
 			conn = JDBCDataSource.getConnection();
 			conn.setAutoCommit(false); // Begin transaction
-			String sql = "UPDATE "
-					+ getTableName()
-					+ " SET RECEIVER=?,SENDER = ?,DETAIL=?,ATTACHMENT=?  WHERE ID=?";
+			String sql = "UPDATE ST_MAIL SET SENDER = ?,DETAIL=?,ATTACHMENT=?,RECEIVER=?  WHERE ID=?";
+
 			log.info("SQL : " + sql);
 			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, receiver);
-			pstmt.setString(2, sender);
-			pstmt.setString(3, detail);
-			pstmt.setString(4, attachment);
+
+			pstmt.setString(1, sender);
+			pstmt.setString(2, detail);
+			pstmt.setString(3, attachment);
+			pstmt.setString(4, receiver);
+			pstmt.setLong(5, id);
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+			updateModifiedInfo();
 		} catch (Exception e) {
 			log.error("Database Exception..", e);
 			try {
@@ -248,8 +254,8 @@ public class MailModel extends BaseModel {
 	/**
 	 * Searches records on the basis of model NOT NULL attributes with
 	 * pagination.
-	 *
-	 *
+	 * 
+	 * 
 	 * @param pageNo
 	 * @param pageSize
 	 * @return
@@ -257,8 +263,7 @@ public class MailModel extends BaseModel {
 	 */
 	public List search(int pageNo, int pageSize) throws ApplicationException {
 		log.debug("Model search Started");
-		StringBuffer sql = new StringBuffer("SELECT * FROM " + getTableName()
-				+ " WHERE 1=1 ");
+		StringBuffer sql = new StringBuffer("SELECT * FROM ST_MAIL WHERE 1=1 ");
 
 		if (id > 0) {
 			sql.append(" AND id = " + id);
@@ -293,10 +298,10 @@ public class MailModel extends BaseModel {
 			while (rs.next()) {
 				MailModel model = new MailModel();
 				model.setId(rs.getLong(1));
-				model.setReceiver(rs.getString(2));
-				model.setSender(rs.getString(3));
-				model.setDetail(rs.getString(4));
-				model.setAttachment(rs.getString(5));
+				model.setSender(rs.getString(2));
+				model.setDetail(rs.getString(3));
+				model.setAttachment(rs.getString(4));
+				model.setReceiver(rs.getString(5));
 				list.add(model);
 			}
 			rs.close();
@@ -313,7 +318,7 @@ public class MailModel extends BaseModel {
 
 	/**
 	 * Searches records on the basis of model NOT NULL attributes
-	 *
+	 * 
 	 * @return
 	 * @throws ApplicationException
 	 */

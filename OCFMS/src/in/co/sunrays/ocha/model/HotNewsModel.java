@@ -81,10 +81,9 @@ public class HotNewsModel extends BaseModel {
 			// Get auto-generated next primary key
 			pk = nextPK();
 			conn.setAutoCommit(false); // Begin transaction
-			String sql = "INSERT INTO "
-							+ getTableName()
-							+ " VALUES(?,?,?,?,?)";
-
+			String sql = "INSERT INTO ST_HOT_NEWS (ID,NEWS,DECLARED_DATE,TIME,AUTHORIZED_PERSON) VALUES(?,?,?,?,?)";
+							
+						
 			log.info("SQL : " + sql);
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setLong(1, pk);
@@ -96,6 +95,11 @@ public class HotNewsModel extends BaseModel {
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+			
+			this.setId(pk);
+			updateCreatedInfo();
+			
+			
 		} catch (Exception e) {
 			log.error("Database Exception..", e);
 			try {
@@ -126,9 +130,9 @@ public class HotNewsModel extends BaseModel {
 		try {
 			conn = JDBCDataSource.getConnection();
 			conn.setAutoCommit(false); // Begin transaction
-			String sql = "DELETE FROM "
-							+ getTableName()
-							+ " WHERE ID=?";
+			String sql = "DELETE FROM ST_HOT_NEWS WHERE ID=?";
+					
+						 
 			log.info("SQL : " + sql);
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -163,9 +167,9 @@ public class HotNewsModel extends BaseModel {
 	public HotNewsModel findByPK(long pk) throws ApplicationException {
 		log.debug("Model findByName Started");
 		StringBuffer sql = new StringBuffer(
-				"SELECT * FROM "
-							+ getTableName()
-							+ " WHERE ID=?");
+				"SELECT * FROM ST_HOT_NEWS WHERE ID=?");
+							
+							 
 		log.info("SQL : " + sql);
 		HotNewsModel model = null;
 		Connection conn = null;
@@ -199,27 +203,29 @@ public class HotNewsModel extends BaseModel {
 	 *
 	 * @throws ApplicationException
 	 */
-	public void update(HotNewsModel model) throws ApplicationException {
+	public void update() throws ApplicationException {
 		log.debug("Model update Started");
 		Connection conn = null;
 		try {
 			conn = JDBCDataSource.getConnection();
 			conn.setAutoCommit(false); // Begin transaction
-			String sql = "UPDATE "
-							+ getTableName()
-							+ " SET NEWS=?,DECLARED_DATE = ?,TIME = ?,AUTHORIZED_PERSON=?  WHERE ID=?";
+			String sql = "UPDATE ST_HOT_NEWS SET NEWS=?,"
+					+ "DECLARED_DATE = ?,TIME = ?,AUTHORIZED_PERSON=?  WHERE ID=?";
+							
+							
 			log.info("SQL : " + sql);
 			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, model.getNews());
-			pstmt.setDate(2, new java.sql.Date(model.getDeclaredDate()
+			pstmt.setString(1, news);
+			pstmt.setDate(2, new java.sql.Date(declaredDate
 					.getTime()));
-			pstmt.setDate(3, new java.sql.Date(new Date().getTime()));
+			pstmt.setDate(3, new java.sql.Date(time.getTime()));
 
-			pstmt.setString(4, model.getAuthorizedPerson());
-			pstmt.setLong(5, model.getId());
+			pstmt.setString(4, authorizedPerson);
+			pstmt.setLong(5, id);
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+			updateModifiedInfo();
 		} catch (Exception e) {
 			log.error("Database Exception..", e);
 			try {
@@ -246,19 +252,17 @@ public class HotNewsModel extends BaseModel {
 	 * @return
 	 * @throws ApplicationException
 	 */
-	public List search(HotNewsModel model, int pageNo, int pageSize)
+	public List search(int pageNo, int pageSize)
 			throws ApplicationException {
 		log.debug("Model search Started");
 		StringBuffer sql = new StringBuffer(
-				"SELECT * FROM "
-							+ getTableName()
-							+ " WHERE 1=1 ");
-
+				"SELECT * FROM ST_HOT_NEWS WHERE 1=1");
+					
 		if (id > 0) {
-			sql.append(" AND id = " + model.getId());
+			sql.append(" AND id = " + id);
 		}
-		if (news != null && model.getNews().length() > 0) {
-			sql.append(" AND NEWS like '" + model.getNews() + "%'");
+		if (news != null && news.length() > 0) {
+			sql.append(" AND NEWS like '" + news + "%'");
 		}
 		if (declaredDate != null) {
 			sql.append(" AND DECLARED_DATE like '" + declaredDate + "%'");
@@ -283,7 +287,7 @@ public class HotNewsModel extends BaseModel {
 			PreparedStatement pstmt = conn.prepareStatement(sql.toString());
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
-				model = new HotNewsModel();
+				HotNewsModel model = new HotNewsModel();
 				model.setId(rs.getLong(1));
 				model.setNews(rs.getString(2));
 				model.setDeclaredDate(rs.getDate(3));
@@ -310,7 +314,7 @@ public class HotNewsModel extends BaseModel {
 	 * @throws ApplicationException
 	 */
 	public List search(HotNewsModel model) throws ApplicationException {
-		return search(model, 0, 0);
+		return search(0, 0);
 	}
 
 	/**

@@ -19,16 +19,10 @@
 </h3>
 <hr>
 
-<h1>Missing Person</h1>
+<p class="st-title">Missing Person</p>
 
-<H2>
-	<font color="green"> <%=ServletUtility.getSuccessMessage(request)%>
-	</font>
-</H2>
-<H2>
-	<font color="red"> <%=ServletUtility.getErrorMessage(request)%>
-	</font>
-</H2>
+<%=HTMLUtility.getSuccessMessage(request)%>
+<%=HTMLUtility.getErrorMessage(request)%>
 
 <form name="stForm" action="<%=ORSView.MISSINGPERSON_CTL%>" method="POST">
 	<input type="hidden" name="id" value="<%=model.getId()%>">

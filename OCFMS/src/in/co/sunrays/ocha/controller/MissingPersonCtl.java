@@ -1,12 +1,12 @@
 package in.co.sunrays.ocha.controller;
 
+import in.co.sunrays.common.model.UserModel;
 import in.co.sunrays.ocha.model.BaseModel;
 import in.co.sunrays.ocha.model.MissingPersonModel;
 import in.co.sunrays.ocha.model.MostWantedModel;
 import in.co.sunrays.ocha.model.PoliceStationModel;
 import in.co.sunrays.ocha.exception.ApplicationException;
 import in.co.sunrays.ocha.exception.DuplicateRecordException;
-import in.co.sunrays.ocha.model.UserModel;
 import in.co.sunrays.util.DataUtility;
 import in.co.sunrays.util.DataValidator;
 import in.co.sunrays.util.PropertyReader;
@@ -40,7 +40,7 @@ public class MissingPersonCtl extends BaseCtl {
 	protected void preload(HttpServletRequest request) {
 		MissingPersonModel model = new MissingPersonModel();
 		try {
-			List l = model.search(null);
+			List l = model.search();
 			request.setAttribute("roleList", l);
 		} catch (ApplicationException e) {
 			log.error(e);
@@ -48,7 +48,7 @@ public class MissingPersonCtl extends BaseCtl {
 		
 		PoliceStationModel stationModel = new PoliceStationModel();
 		try {
-			List l = stationModel.search(null);
+			List l = stationModel.search();
 			request.setAttribute("policeStList", l);
 		} catch (ApplicationException e) {
 			log.error(e);
@@ -178,7 +178,7 @@ public class MissingPersonCtl extends BaseCtl {
 
 		bean.setReportId(DataUtility.getLong(request.getParameter("reportId")));
 		bean.setPhoto(DataUtility.getString(request.getParameter("photo")));
-		populateDTO(bean, request);
+		populateModel(bean, request);
 
 		log.debug("MissingPersonCtl Method populatebean Ended");
 
@@ -204,7 +204,7 @@ public class MissingPersonCtl extends BaseCtl {
 		if (OP_SAVE_UP.equalsIgnoreCase(op)) {
 			try {
 				if (id > 0) {
-					model.update(model);
+					model.update();
 				} else {
 					long pk = model.add();
 					model.setId(pk);

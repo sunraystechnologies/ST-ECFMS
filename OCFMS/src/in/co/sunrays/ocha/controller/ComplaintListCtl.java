@@ -1,11 +1,11 @@
 package in.co.sunrays.ocha.controller;
 
 import in.co.sunrays.ocha.bean.BaseBean;
+
 import in.co.sunrays.ocha.bean.StudentBean;
 import in.co.sunrays.ocha.exception.ApplicationException;
 import in.co.sunrays.ocha.model.ComplaintModel;
 import in.co.sunrays.ocha.model.PoliceStationModel;
-import in.co.sunrays.ocha.model.StudentModel;
 import in.co.sunrays.util.DataUtility;
 import in.co.sunrays.util.PropertyReader;
 import in.co.sunrays.util.ServletUtility;
@@ -91,7 +91,7 @@ public class ComplaintListCtl extends BaseCtl {
 				}
 
 			}
-			list = cmodel.search(model, pageNo, pageSize);
+			list = cmodel.search(pageNo, pageSize);
 			ServletUtility.setList(list, request);
 			if (list == null || list.size() == 0) {
 				ServletUtility.setErrorMessage("No record found ", request);

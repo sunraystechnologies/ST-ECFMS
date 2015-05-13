@@ -149,9 +149,11 @@ public class MostWantedModel extends BaseModel {
 			System.out.println(pk + " in ModelJDBC");
 			conn.setAutoCommit(false); // Begin transaction
 			PreparedStatement pstmt = conn
-					.prepareStatement("INSERT INTO "
-							+ getTableName()
-							+ " VALUES(?,?,?,?,?,?,?,?,?,?,?)");
+					.prepareStatement("INSERT INTO ST_MOST_WANTED (ID,NAME_OF_CRIMINAL,"
+							+ "TYPE_OF_CRIME,COMPLEXION,MARK_OF_IDENTIFICATION,"
+							+ "AGE,GENDER,HEIGHT,STATUS,PHOTO,POLICE_ST_ID) VALUES(?,?,?,?,?,?,?,?,?,?,?)");
+							
+							
 			pstmt.setLong(1, pk);
 			pstmt.setString(2, nameOfCriminal);
 			pstmt.setString(3, typeOfCrime);
@@ -167,7 +169,10 @@ public class MostWantedModel extends BaseModel {
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
-
+			
+			this.setId(pk);
+			updateCreatedInfo();
+	
 		} catch (Exception e) {
 			log.error("Database Exception..", e);
 			try {
@@ -198,10 +203,8 @@ public class MostWantedModel extends BaseModel {
 			conn = JDBCDataSource.getConnection();
 			conn.setAutoCommit(false); // Begin transaction
 			PreparedStatement pstmt = conn
-					.prepareStatement("DELETE FROM "
-							+ getTableName()
-							+ " WHERE ID=?");
-
+					.prepareStatement("DELETE FROM ST_MOST_WANTED WHERE ID=?");
+							
 			pstmt.setLong(1, getId());
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
@@ -245,9 +248,8 @@ public class MostWantedModel extends BaseModel {
 	public MostWantedModel findByPK(long pk) throws ApplicationException {
 		log.debug("Model findByPK Started");
 		StringBuffer sql = new StringBuffer(
-				"SELECT * FROM "
-							+ getTableName()
-							+ " WHERE ID=?");
+				"SELECT * FROM ST_MOST_WANTED  WHERE ID=?");
+							
 		log.info("SQL : " + sql);
 		MostWantedModel model = null;
 		Connection conn = null;
@@ -290,7 +292,7 @@ public class MostWantedModel extends BaseModel {
 	 * @throws DatabaseException
 	 */
 
-	public void update(MostWantedModel model) throws ApplicationException
+	public void update() throws ApplicationException
 			 {
 		log.debug("Model update Started");
 		Connection conn = null;
@@ -307,26 +309,26 @@ public class MostWantedModel extends BaseModel {
 			conn.setAutoCommit(false); // Begin transaction
 
 			PreparedStatement pstmt = conn
-					.prepareStatement("UPDATE "
-							+ getTableName()
-							+ " "
-							+ "SET NAME_OF_CRIMINAL= ?,TYPE_OF_CRIME = ?,COMPLEXION = ?,"
+					.prepareStatement("UPDATE ST_MOST_WANTED SET NAME_OF_CRIMINAL= ?,"
+							+ "TYPE_OF_CRIME = ?,COMPLEXION = ?,"
 							+ "MARK_OF_IDENTIFICATION = ?,AGE = ?,GENDER = ?,HEIGHT = ?,"
 							+ "STATUS = ?,PHOTO= ?,POLICE_ST_ID =? WHERE ID=?");
-			pstmt.setString(1, model.getNameOfCriminal());
-			pstmt.setString(2, model.getTypeOfCrime());
-			pstmt.setString(3, model.getComplexion());
-			pstmt.setLong(4, model.getMarkOfIdentification());
-			pstmt.setInt(5, model.getAge());
-			pstmt.setString(6, model.getGender());
-			pstmt.setInt(7, model.getHeight());
-			pstmt.setString(8, model.getStatus());
-			pstmt.setString(9, model.getPhoto());
-			pstmt.setLong(10, model.getPolicsStId());
-			pstmt.setLong(11, model.getId());
+			
+			pstmt.setString(1, nameOfCriminal);
+			pstmt.setString(2, typeOfCrime);
+			pstmt.setString(3, complexion);
+			pstmt.setLong(4, markOfIdentification);
+			pstmt.setInt(5, age);
+			pstmt.setString(6, gender);
+			pstmt.setInt(7, height);
+			pstmt.setString(8, status);
+			pstmt.setString(9, photo);
+			pstmt.setLong(10, policsStId);
+			pstmt.setLong(11, id);
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+			updateModifiedInfo();
 		} catch (Exception e) {
 			log.error("Database Exception..", e);
 			try {
@@ -351,8 +353,8 @@ public class MostWantedModel extends BaseModel {
 	 * @throws DatabaseException
 	 */
 
-	public List search(MostWantedModel model) throws ApplicationException {
-		return search(model, 0, 0);
+	public List search() throws ApplicationException {
+		return search(0, 0);
 	}
 
 	/**
@@ -369,53 +371,50 @@ public class MostWantedModel extends BaseModel {
 	 * @throws DatabaseException
 	 */
 
-	public List search(MostWantedModel model, int pageNo, int pageSize)
+	public List search(int pageNo, int pageSize)
 			throws ApplicationException {
 		log.debug("Model search Started");
 		StringBuffer sql = new StringBuffer(
-				"SELECT * FROM "
-							+ getTableName()
-							+ " WHERE 1=1");
+				"SELECT * FROM ST_MOST_WANTED WHERE 1=1");
+							 
 
-		if (model != null) {
+		
 			if (id > 0) {
-				sql.append(" AND id = " + model.getId());
+				sql.append(" AND id = " + id);
 			}
 			if (nameOfCriminal != null
-					&& model.getNameOfCriminal().length() > 0) {
+					&& nameOfCriminal.length() > 0) {
 				sql.append(" AND NAME_OF_CRIMINAL like '"
-						+ model.getNameOfCriminal() + "%'");
+						+ nameOfCriminal + "%'");
 			}
-			if (typeOfCrime != null && model.getTypeOfCrime().length() > 0) {
-				sql.append(" AND TYPE_OF_CRIME like '" + model.getTypeOfCrime()
+			if (typeOfCrime != null && typeOfCrime.length() > 0) {
+				sql.append(" AND TYPE_OF_CRIME like '" + typeOfCrime
 						+ "%'");
 			}
-			if (complexion != null && model.getComplexion().length() > 0) {
-				sql.append(" AND COMPLEXTION = " + model.getComplexion());
+			if (complexion != null && complexion.length() > 0) {
+				sql.append(" AND COMPLEXTION = " + complexion);
 			}
-			if (model.getMarkOfIdentification() != 0
-					&& model.getMarkOfIdentification() > 0) {
+			if (markOfIdentification != 0
+					&& markOfIdentification > 0) {
 				sql.append(" AND MARK_OF_IDENTIFICATION like '"
-						+ model.getMarkOfIdentification() + "%'");
+						+ markOfIdentification + "%'");
 			}
-			if (model.getAge() != null && model.getAge() > 0) {
-				sql.append(" AND AGE like '" + model.getAge() + "%'");
+			if (age != null && age > 0) {
+				sql.append(" AND AGE like '" + age + "%'");
 			}
-			if (gender != null && model.getGender().length() > 0) {
-				sql.append(" AND GENDER like '" + model.getGender());
+			if (gender != null && gender.length() > 0) {
+				sql.append(" AND GENDER like '" + gender);
 			}
-			if (model.getHeight() != null && model.getHeight() > 0) {
-				sql.append(" AND HEIGHT like '" + model.getHeight());
+			if (height!= null && height > 0) {
+				sql.append(" AND HEIGHT like '" + height);
 			}
-			if (model.getStatus() != null && model.getStatus().length() > 0) {
-				sql.append(" AND STATUS like '" + model.getStatus());
-			}
-
-			if (model.getPolicsStId() != 0 && model.getPolicsStId() > 0) {
-				sql.append(" AND POLICS ID like '" + model.getPolicsStId());
+			if (status != null && status.length() > 0) {
+				sql.append(" AND STATUS like '" + status);
 			}
 
-		}
+			if (policsStId != 0 && policsStId > 0) {
+				sql.append(" AND POLICS ID like '" + policsStId);
+			}
 
 		// if page size is greater than zero then apply pagination
 		if (pageSize > 0) {
@@ -433,7 +432,7 @@ public class MostWantedModel extends BaseModel {
 			PreparedStatement pstmt = conn.prepareStatement(sql.toString());
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
-				model = new MostWantedModel();
+				MostWantedModel	model = new MostWantedModel();
 				model.setId(rs.getLong(1));
 				model.setNameOfCriminal(rs.getString(2));
 				model.setTypeOfCrime(rs.getString(3));

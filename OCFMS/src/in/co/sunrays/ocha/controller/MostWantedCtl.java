@@ -1,11 +1,12 @@
 package in.co.sunrays.ocha.controller;
-import in.co.sunrays.ocha.model.BaseModel;
+import in.co.sunrays.common.model.UserModel;
 
+import in.co.sunrays.ocha.model.BaseModel;
 import in.co.sunrays.ocha.model.CrimeReportModel;
+import in.co.sunrays.ocha.model.PoliceStationModel;
 import in.co.sunrays.ocha.model.MostWantedModel;
 import in.co.sunrays.ocha.exception.ApplicationException;
 import in.co.sunrays.ocha.exception.DuplicateRecordException;
-import in.co.sunrays.ocha.model.UserModel;
 import in.co.sunrays.util.DataUtility;
 import in.co.sunrays.util.DataValidator;
 import in.co.sunrays.util.PropertyReader;
@@ -39,6 +40,15 @@ public class MostWantedCtl extends BaseCtl {
 
 	@Override
 	protected void preload(HttpServletRequest request) {
+		
+		PoliceStationModel model = new PoliceStationModel();
+		try {
+			List l = model.search();
+			request.setAttribute("policeStList", l);
+		} catch (ApplicationException e) {
+			log.error(e);
+		}
+		
 		HashMap<String, String> toc = new HashMap<>();
 		toc.put("Knife crime", "Knife crime");
 		toc.put("Property crimes", "Property crimes");
@@ -46,6 +56,7 @@ public class MostWantedCtl extends BaseCtl {
 		request.setAttribute("toc", toc);
 
 	}
+	
 
 	@Override
 	protected boolean validate(HttpServletRequest request) {
@@ -147,7 +158,7 @@ public class MostWantedCtl extends BaseCtl {
 
 		bean.setPolicsStId(DataUtility.getLong(request.getParameter("policsStId")));
 
-		populateDTO(bean, request);
+		populateModel(bean, request);
 
 		log.debug("MostWantedCtl Method populatebean Ended");
 
@@ -173,7 +184,7 @@ public class MostWantedCtl extends BaseCtl {
 		if (OP_SAVE_UP.equalsIgnoreCase(op)) {
 			try {
 				if (id > 0) {
-					model.update(model);
+					model.update();
 				} else {
 					long pk = model.add();
 					model.setId(pk);

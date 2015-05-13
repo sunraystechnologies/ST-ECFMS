@@ -1,4 +1,4 @@
-<%@page import="in.co.sunrays.ocha.bean.UserBean"%>
+<%@page import="in.co.sunrays.common.model.UserModel"%>
 <%@page import="in.co.sunrays.ocha.controller.MailCtl"%>
 <%@page import="in.co.sunrays.ocha.controller.ORSView"%>
 <%@page import="java.util.List"%>
@@ -21,18 +21,12 @@
 </h3>
 <hr>
 
-<h1>Mail</h1>
+<p class="st-title">Mail</p>
 
-<H2>
-	<font color="green"> <%=ServletUtility.getSuccessMessage(request)%>
-	</font>
-</H2>
-<H2>
-	<font color="red"> <%=ServletUtility.getErrorMessage(request)%>
-	</font>
-</H2>
+<%=HTMLUtility.getSuccessMessage(request)%>
+<%=HTMLUtility.getErrorMessage(request)%>
 <%
-	UserBean userBean = (UserBean) session.getAttribute("user");
+	UserModel userModel = (UserModel) session.getAttribute("user");
 %>
 <form action="<%=ORSView.MAIL_CTL%>" method="POST">
 
@@ -48,7 +42,7 @@
 		<tr>
 			<th>Sender</th>
 			<td><input readonly="readonly" name="sender"
-				value="<%=userBean.getLogin()%>"></td>
+				value="<%=userModel.getLogin()%>"></td>
 		</tr>
 		<tr>
 			<th>Detail*</th>

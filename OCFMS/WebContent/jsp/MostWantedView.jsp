@@ -14,21 +14,19 @@
 
 <jsp:useBean id="toc" class="java.util.HashMap" scope="request"></jsp:useBean>
 
+<jsp:useBean id="policeStList" class="java.util.ArrayList"
+	scope="request" />
+
 <h3>
 	| <a href="<%=ORSView.MOSTWANTED_CTL%>">Most Wanted</b></a> | <a
 		href="<%=ORSView.MOSTWANTED_LIST_CTL%>">Most wanted List</a> |
 </h3>
 <hr>
-<h1>Most Wanted</h1>
+<p class="st-title">Most Wanted</p>
 
-<H2>
-	<font color="green"> <%=ServletUtility.getSuccessMessage(request)%>
-	</font>
-</H2>
-<H2>
-	<font color="red"> <%=ServletUtility.getErrorMessage(request)%>
-	</font>
-</H2>
+
+<%=HTMLUtility.getSuccessMessage(request)%>
+<%=HTMLUtility.getErrorMessage(request)%>
 <form action="<%=ORSView.MOSTWANTED_CTL%>" method="POST">
 
 	<input type="hidden" name="id" value="<%=model.getId()%>">
@@ -96,10 +94,9 @@
 		</tr>
 
 		<tr>
-			<th>Polics St Id*</th>
-			<td><input type="text" name="policsStId"
-				value="<%=DataUtility.getStringData(model.getPolicsStId())%>"></input><font
-				color="red"> <%=ServletUtility.getErrorMessage("policsStId", request)%></font></td>
+			<th>Police St Id*</th>
+			<td><%=HTMLUtility.getList("policsStId",
+					String.valueOf(model.getPolicsStId()), policeStList)%></td>
 		</tr>
 		<tr>
 			<th></th>

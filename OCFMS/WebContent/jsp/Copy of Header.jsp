@@ -1,6 +1,6 @@
 <%@page import="in.co.sunrays.ocha.model.AppRoles"%>
-<%@page import="in.co.sunrays.ocha.model.RoleModel"%>
-<%@page import="in.co.sunrays.ocha.controller.LoginCtl"%>
+<%@page import="in.co.sunrays.common.model.RoleModel"%>
+<%@page import="in.co.sunrays.common.controller.LoginCtl"%>
 <%@page import="in.co.sunrays.ocha.bean.UserBean"%>
 <%@page import="in.co.sunrays.ocha.controller.ORSView"%>
 

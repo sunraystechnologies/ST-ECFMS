@@ -1,12 +1,14 @@
 package in.co.sunrays.ocha.controller;
 
+import in.co.sunrays.common.model.UserModel;
+import in.co.sunrays.ocha.model.AppRoles;
 import in.co.sunrays.ocha.model.BaseModel;
 import in.co.sunrays.ocha.model.CrimeReportModel;
 import in.co.sunrays.ocha.model.HotNewsModel;
 import in.co.sunrays.ocha.model.PoliceStationModel;
 import in.co.sunrays.ocha.exception.ApplicationException;
 import in.co.sunrays.ocha.exception.DuplicateRecordException;
-import in.co.sunrays.ocha.model.UserModel;
+import in.co.sunrays.util.AccessUtility;
 import in.co.sunrays.util.DataUtility;
 import in.co.sunrays.util.DataValidator;
 import in.co.sunrays.util.PropertyReader;
@@ -51,7 +53,7 @@ public class CrimeReportCtl extends BaseCtl {
 
 		List l = new ArrayList();
 		try {
-			l = stationModel.search(null);
+			l = stationModel.search();
 		} catch (ApplicationException e) {
 			log.error(e);
 		}
@@ -152,7 +154,7 @@ public class CrimeReportCtl extends BaseCtl {
 		model.setDocument(DataUtility.getString(request
 				.getParameter("document")));
 
-		populateDTO(model, request);
+		populateModel(model, request);
 
 		log.debug("CrimeReportCtl Method populatebean Ended");
 
@@ -178,7 +180,7 @@ public class CrimeReportCtl extends BaseCtl {
 		if (OP_SAVE_UP.equalsIgnoreCase(op)) {
 			try {
 				if (id > 0) {
-					model.update(model);
+					model.update();
 				} else {
 					long pk = model.add();
 					model.setId(pk);
@@ -243,3 +245,5 @@ public class CrimeReportCtl extends BaseCtl {
 		return ORSView.CRIMEREPORT_VIEW;
 	}
 }
+
+

@@ -23,16 +23,10 @@
 </h3>
 <hr>
 
-<h1>Crime Report</h1>
+<p class="st-title">Crime Report</p>
 
-<H2>
-	<font color="green"> <%=ServletUtility.getSuccessMessage(request)%>
-	</font>
-</H2>
-<H2>
-	<font color="red"> <%=ServletUtility.getErrorMessage(request)%>
-	</font>
-</H2>
+<%=HTMLUtility.getSuccessMessage(request)%>
+<%=HTMLUtility.getErrorMessage(request)%>
 
 <form name="stForm" action="<%=ORSView.CRIMEREPORT_CTL%>" method="POST">
 

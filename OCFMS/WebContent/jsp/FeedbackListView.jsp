@@ -5,7 +5,7 @@
 <%@page import="in.co.sunrays.util.DataUtility"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Iterator"%>
-
+<%@page import="in.co.sunrays.util.HTMLUtility"%>
 <jsp:useBean id="model" class="in.co.sunrays.ocha.model.FeedbackModel"
 	scope="request"></jsp:useBean>
 <h3>
@@ -14,7 +14,7 @@
 </h3>
 <hr>
 
-<h1>Feedback List</h1>
+<p class="st-title">Feedback List</p>
 
 <form action="<%=ORSView.FEEDBACK_LIST_CTL%>">
 
@@ -41,7 +41,7 @@
 		</tr>
 
 		<tr>
-			<td colspan="8"><font color="red"><%=ServletUtility.getErrorMessage(request)%></font></td>
+			<td colspan="8"><%=HTMLUtility.getErrorMessage(request)%></td>
 		</tr>
 
 		<%

@@ -20,7 +20,7 @@
 
 </h3>
 <hr>
-<h1>Inbox</h1>
+<p class="st-title">Inbox</p>
 
 <form action="<%=ORSView.INBOX_LIST_CTL%>">
 

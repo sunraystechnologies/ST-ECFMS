@@ -134,7 +134,7 @@ public class ComplaintModel extends BaseModel {
 			// Get auto-generated next primary key
 			conn.setAutoCommit(false); // Begin transaction
 
-			String sql = "INSERT INTO "+ getTableName() +" (" + columnNames + ")"
+			String sql = "INSERT INTO ST_COMPLAIN (" + columnNames + ")"
 					+ " VALUES(?,?,?,?,?,?,?,?,?,?)";
 			log.info("SQL : " + sql);
 
@@ -152,6 +152,9 @@ public class ComplaintModel extends BaseModel {
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+			
+			this.setId(pk);
+			updateCreatedInfo();
 
 		} catch (Exception e) {
 			log.error("Database Exception..", e);
@@ -184,7 +187,7 @@ public class ComplaintModel extends BaseModel {
 			conn = JDBCDataSource.getConnection();
 			conn.setAutoCommit(false); // Begin transaction
 
-			String sql = "DELETE FROM " + getTableName() + " WHERE ID=?";
+			String sql = "DELETE FROM ST_COMPLAIN WHERE ID=?";
 			log.info("SQL : " + sql);
 
 			PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -220,8 +223,8 @@ public class ComplaintModel extends BaseModel {
 	public ComplaintModel findByPK(long pk) throws ApplicationException {
 		log.debug("Model findByPK Started");
 
-		StringBuffer sql = new StringBuffer("SELECT * FROM " + getTableName()
-				+ " WHERE ID=?");
+		StringBuffer sql = new StringBuffer("SELECT * FROM ST_COMPLAIN  WHERE ID=?");
+			
 		log.info("SQL : " + sql);
 
 		ComplaintModel model = null;
@@ -272,9 +275,10 @@ public class ComplaintModel extends BaseModel {
 
 			conn.setAutoCommit(false); // Begin transaction
 
-			String sql = "UPDATE "
-					+ getTableName()
-					+ " SET COMPLAINT_ID=?,type=?,doc=?,police_Station_Id=?,police_station_Name=?,doc1=?,doc2=?,doc3=?,doc4=? WHERE ID=?";
+			String sql = "UPDATE ST_COMPLAIN SET COMPLAINT_ID=?,"
+					+ "type=?,doc=?,police_Station_Id=?,police_station_Name=?,"
+					+ "doc1=?,doc2=?,doc3=?,doc4=? WHERE ID=?";
+					
 			log.info("SQL : " + sql);
 
 			System.out.println(sql);
@@ -294,6 +298,7 @@ public class ComplaintModel extends BaseModel {
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+			updateModifiedInfo();
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("Database Exception..", e);
@@ -311,8 +316,8 @@ public class ComplaintModel extends BaseModel {
 		log.debug("Model update End");
 	}
 
-	public List search(ComplaintModel model) throws ApplicationException {
-		return search(model, 0, 0);
+	public List search() throws ApplicationException {
+		return search(0, 0);
 	}
 
 	/**
@@ -325,46 +330,45 @@ public class ComplaintModel extends BaseModel {
 	 * @return
 	 * @throws ApplicationException
 	 */
-	public List search(ComplaintModel model, int pageNo, int pageSize)
+	public List search(int pageNo, int pageSize)
 			throws ApplicationException {
 		log.debug("Model search Started");
-		StringBuffer sql = new StringBuffer("SELECT " + columnNames + " FROM "
-				+ getTableName() + " WHERE 1=1");
+		StringBuffer sql = new StringBuffer("SELECT FROM ST_COMPLAIN WHERE 1=1");
+				
 
 		/*
 		 * private String compiantId = null; private String type = null; private
 		 * Date doc = null; private long policeStationId = 0; private String
 		 * policeName = null;
 		 */
-		if (model != null) {
-			System.out.println(model.getDoc());
-			/*
-			 * if (model.getId() > 0) { sql.append(" AND id = " +
-			 * model.getId()); }
-			 */
-			if (model.getcomplaintId() != null
-					&& model.getcomplaintId().length() > 0) {
-				sql.append(" AND COMPLAINT_ID like '" + model.getcomplaintId()
+			 if (id > 0) { 
+				 sql.append(" AND id = " +
+			 id); 
+				 }
+			 
+			if (complaintId != null
+					&& complaintId.length() > 0) {
+				sql.append(" AND COMPLAINT_ID like '" + complaintId
 						+ "%'");
 			}
-			if (model.getType() != null && model.getType().length() > 0) {
-				sql.append(" AND TYPE like '" + model.getType() + "%'");
+			if (type != null && type.length() > 0) {
+				sql.append(" AND TYPE like '" + type + "%'");
 			}
 
-			if (model.getDoc() != null) {
-				sql.append(" AND DOC like '" + model.getDoc());
+			if (doc != null) {
+				sql.append(" AND DOC like '" + doc);
 
 			}
-			if (model.getPoliceStationId() != 0) {
+			if (policeStationId != 0) {
 				sql.append(" AND POLICE_STATION_ID = "
-						+ model.getPoliceStationId());
+						+ policeStationId);
 			}
-			if (model.getpoliceStationName() != null
-					&& model.getpoliceStationName().length() > 0) {
+			if (policeStationName != null
+					&& policeStationName.length() > 0) {
 				sql.append(" AND POLICE_STATION_NAME like '"
-						+ model.getpoliceStationName() + "%'");
+						+ policeStationName + "%'");
 			}
-		}
+		
 
 		// if page size is greater than zero then apply pagination
 		if (pageSize > 0) {
@@ -384,7 +388,7 @@ public class ComplaintModel extends BaseModel {
 			PreparedStatement pstmt = conn.prepareStatement(sql.toString());
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
-				model = new ComplaintModel();
+				ComplaintModel model = new ComplaintModel();
 				model.setId(rs.getLong(1));
 				model.setcomplaintId(rs.getString(2));
 				model.setType(rs.getString(3));

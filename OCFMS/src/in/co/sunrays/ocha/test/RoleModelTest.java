@@ -1,8 +1,8 @@
 package in.co.sunrays.ocha.test;
 
+import in.co.sunrays.common.model.RoleModel;
 import in.co.sunrays.ocha.exception.ApplicationException;
 import in.co.sunrays.ocha.exception.DuplicateRecordException;
-import in.co.sunrays.ocha.model.RoleModel;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -158,7 +158,7 @@ public class RoleModelTest {
 			RoleModel model = new RoleModel();
 			List list = new ArrayList();
 			model.setName("student");
-			list = model.search(model, 0, 0);
+			list = model.search(0, 0);
 			if (list.size() < 0) {
 				System.out.println("Test Serach fail");
 			}
@@ -183,7 +183,7 @@ public class RoleModelTest {
 
 		try {
 			RoleModel model = new RoleModel();
-			List list = model.search(model, 1, 10);
+			List list = model.search(1, 10);
 			if (list.size() < 0) {
 				System.out.println("Test list fail");
 			}

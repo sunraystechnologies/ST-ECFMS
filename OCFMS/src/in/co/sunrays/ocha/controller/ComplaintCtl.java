@@ -36,7 +36,7 @@ public class ComplaintCtl extends BaseCtl {
 
 		PoliceStationModel model = new PoliceStationModel();
 		try {
-			List l = model.search(null);
+			List l = model.search();
 			request.setAttribute("policeStList", l);
 		} catch (ApplicationException e) {
 			log.error(e);
@@ -112,7 +112,7 @@ public class ComplaintCtl extends BaseCtl {
 		cmodel.setDoc3(DataUtility.getString(request.getParameter("doc3")));
 		cmodel.setDoc4(DataUtility.getString(request.getParameter("doc4")));
 
-		populateDTO(cmodel, request);
+		populateModel(cmodel, request);
 
 		log.debug("ComplaintCtl Method populatemodel Ended");
 

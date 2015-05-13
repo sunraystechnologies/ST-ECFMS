@@ -1,11 +1,11 @@
 package in.co.sunrays.ocha.controller;
 
+import in.co.sunrays.common.model.UserModel;
 import in.co.sunrays.ocha.bean.UserBean;
 import in.co.sunrays.ocha.exception.ApplicationException;
 import in.co.sunrays.ocha.model.BaseModel;
 import in.co.sunrays.ocha.model.FeedbackModel;
 import in.co.sunrays.ocha.model.MailModel;
-import in.co.sunrays.ocha.model.UserModel;
 import in.co.sunrays.ocha.model.HotNewsModel;
 import in.co.sunrays.util.DataUtility;
 import in.co.sunrays.util.PropertyReader;

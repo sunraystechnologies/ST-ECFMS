@@ -91,9 +91,10 @@ public class PoliceStationModel extends BaseModel {
 			System.out.println(pk + " in ModelJDBC");
 			conn.setAutoCommit(false); // Begin transaction
 			PreparedStatement pstmt = conn
-					.prepareStatement("INSERT INTO "
-							+ getTableName()
-							+ " VALUES (?,?,?,?,?)");
+					.prepareStatement("INSERT INTO ST_POLICE_STATION (ID,NAME_OF_POLICE_STATION,"
+							+ "CODE_OF_POLICE_STATION,AREA_COVERED,CONTACT_NO) VALUES (?,?,?,?,?)");
+						
+					
 
 			pstmt.setLong(1, pk);
 			pstmt.setString(2, nameOfPoliceStation);
@@ -104,6 +105,10 @@ public class PoliceStationModel extends BaseModel {
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+			
+			this.setId(pk);
+			updateCreatedInfo();
+	
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -136,10 +141,8 @@ public class PoliceStationModel extends BaseModel {
 			conn = JDBCDataSource.getConnection();
 			conn.setAutoCommit(false); // Begin transaction
 			PreparedStatement pstmt = conn
-					.prepareStatement("DELETE FROM "
-							+ getTableName()
-							+ " WHERE ID=?");
-
+					.prepareStatement("DELETE FROM ST_POLICE_STATION WHERE ID=?");
+							
 			pstmt.setLong(1, getId());
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
@@ -174,9 +177,8 @@ public class PoliceStationModel extends BaseModel {
 	public PoliceStationModel findByPK(long pk) throws ApplicationException {
 		log.debug("Model findByPK Started");
 		StringBuffer sql = new StringBuffer(
-				"SELECT * FROM "
-							+ getTableName()
-							+ " WHERE ID=?");
+				"SELECT * FROM ST_POLICE_STATION WHERE ID=?");
+							
 		log.info("SQL : " + sql);
 		PoliceStationModel model = null;
 		Connection conn = null;
@@ -212,7 +214,7 @@ public class PoliceStationModel extends BaseModel {
 	 * @throws DatabaseException
 	 */
 
-	public void update(PoliceStationModel model) throws ApplicationException {
+	public void update() throws ApplicationException {
 		log.debug("Model update Started");
 		Connection conn = null;
 		try {
@@ -221,20 +223,20 @@ public class PoliceStationModel extends BaseModel {
 
 			conn.setAutoCommit(false); // Begin transaction
 			PreparedStatement pstmt = conn
-					.prepareStatement("UPDATE "
-							+ getTableName()
-							+ " SET NAME_OF_POLICE_STATION=?,"
+					.prepareStatement("UPDATE ST_POLICE_STATION  SET NAME_OF_POLICE_STATION=?,"
 							+ "CODE_OF_POLICE_STATION=?,AREA_COVERED=?,"
 							+ "CONTACT_NO=? WHERE ID=?");
-			pstmt.setString(1, model.getNameOfPoliceStation());
-			pstmt.setString(2, model.getCodeOfPoliceStation());
-			pstmt.setString(3, model.getAreaCovered());
-			pstmt.setString(4, model.getContactNo());
-			pstmt.setLong(5, model.getId());
+			
+			pstmt.setString(1, nameOfPoliceStation);
+			pstmt.setString(2, codeOfPoliceStation);
+			pstmt.setString(3, areaCovered);
+			pstmt.setString(4, contactNo);
+			pstmt.setLong(5, id);
 
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+			updateModifiedInfo();
 		} catch (Exception e) {
 			log.error("Database Exception..", e);
 			try {
@@ -259,8 +261,8 @@ public class PoliceStationModel extends BaseModel {
 	 *            : Search Parameters
 	 * @throws DatabaseException
 	 */
-	public List search(PoliceStationModel model) throws ApplicationException {
-		return search(model, 0, 0);
+	public List search() throws ApplicationException {
+		return search(0, 0);
 	}
 
 	/**
@@ -276,42 +278,39 @@ public class PoliceStationModel extends BaseModel {
 	 * 
 	 * @throws DatabaseException
 	 */
-	public List search(PoliceStationModel model, int pageNo, int pageSize)
+	public List search(int pageNo, int pageSize)
 			throws ApplicationException {
 		log.debug("Model search Started");
 		StringBuffer sql = new StringBuffer(
-				"SELECT * FROM "
-							+ getTableName()
-							+ " WHERE 1=1");
-
-		if (model != null) {
-			if (model.getId() > 0) {
-				sql.append(" AND id = " + model.getId());
+				"SELECT * FROM ST_POLICE_STATION WHERE 1=1");
+							
+		if (id > 0) {
+				sql.append(" AND id = " + id);
 			}
 
-			if (model.getNameOfPoliceStation() != null
-					&& model.getNameOfPoliceStation().length() > 0) {
+			if (nameOfPoliceStation != null
+					&& nameOfPoliceStation.length() > 0) {
 				sql.append(" AND NAME_OF_POLICE_STATION like '"
-						+ model.getNameOfPoliceStation() + "%'");
+						+ nameOfPoliceStation + "%'");
 
 			}
-			if (model.getCodeOfPoliceStation() != null
-					&& model.getCodeOfPoliceStation().length() > 0) {
+			if (codeOfPoliceStation != null
+					&& codeOfPoliceStation.length() > 0) {
 				sql.append(" AND CODE_OF_POLICE_STATION like '"
-						+ model.getCodeOfPoliceStation() + "%'");
+						+ codeOfPoliceStation + "%'");
 
 			}
-			if (model.getAreaCovered() != null
-					&& model.getAreaCovered().length() > 0) {
-				sql.append(" AND AREA_COVERED like '" + model.getAreaCovered()
+			if (areaCovered != null
+					&& areaCovered.length() > 0) {
+				sql.append(" AND AREA_COVERED like '" + areaCovered
 						+ "%'");
 			}
-			if (model.getContactNo() != null
-					&& model.getContactNo().length() > 0) {
-				sql.append(" AND CONTACT_NO like '" + model.getContactNo()
+			if (contactNo != null
+					&& contactNo.length() > 0) {
+				sql.append(" AND CONTACT_NO like '" + contactNo
 						+ "%'");
 			}
-		}
+
 
 		// if page size is greater than zero then apply pagination
 		if (pageSize > 0) {
@@ -330,7 +329,7 @@ public class PoliceStationModel extends BaseModel {
 			PreparedStatement pstmt = conn.prepareStatement(sql.toString());
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
-				model = new PoliceStationModel();
+				PoliceStationModel	model = new PoliceStationModel();
 				model.setId(rs.getLong(1));
 				model.setNameOfPoliceStation(rs.getString(2));
 				model.setCodeOfPoliceStation(rs.getString(3));

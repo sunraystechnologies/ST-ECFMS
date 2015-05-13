@@ -5,7 +5,7 @@
 <%@page import="in.co.sunrays.util.DataUtility"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Iterator"%>
-
+<%@page import="in.co.sunrays.util.HTMLUtility"%>
 <jsp:useBean id="model" class="in.co.sunrays.ocha.model.MailModel"
 	scope="request"></jsp:useBean>
 
@@ -18,7 +18,7 @@
 </h3>
 <hr>
 
-<h1>Mail List</h1>
+<p class="st-title">Mail List</p>
 
 <form action="<%=ORSView.MAIL_LIST_CTL%>">
 
@@ -46,7 +46,7 @@
 		</tr>
 
 		<tr>
-			<td colspan="8"><font color="red"><%=ServletUtility.getErrorMessage(request)%></font></td>
+			<td colspan="8"><%=HTMLUtility.getErrorMessage(request)%></td>
 		</tr>
 
 		<%

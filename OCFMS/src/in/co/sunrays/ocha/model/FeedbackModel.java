@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 /**
  * Model contains Comment attributes and its Create, Read, Update and Delete
  * methods.
- *
+ * 
  * @version 1.0
  * @since 01 Feb 2015
  * @author SUNRAYS Developer
@@ -30,14 +30,14 @@ public class FeedbackModel extends BaseModel {
 	 * Logger to log the messages.
 	 */
 	private static Logger log = Logger.getLogger(FeedbackModel.class);
-	
+
 	private long id;
 	private String name;
 	private long userId;
 	private String userLogin;
 	private String emailId;
 	private String feedback;
-	
+
 	/**
 	 * @return the id
 	 */
@@ -46,7 +46,8 @@ public class FeedbackModel extends BaseModel {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(long id) {
 		this.id = id;
@@ -60,7 +61,8 @@ public class FeedbackModel extends BaseModel {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -74,7 +76,8 @@ public class FeedbackModel extends BaseModel {
 	}
 
 	/**
-	 * @param emailId the emailId to set
+	 * @param emailId
+	 *            the emailId to set
 	 */
 	public void setEmailId(String emailId) {
 		this.emailId = emailId;
@@ -88,7 +91,8 @@ public class FeedbackModel extends BaseModel {
 	}
 
 	/**
-	 * @param feedback the feedback to set
+	 * @param feedback
+	 *            the feedback to set
 	 */
 	public void setFeedback(String feedback) {
 		this.feedback = feedback;
@@ -97,12 +101,13 @@ public class FeedbackModel extends BaseModel {
 	/**
 	 * @return the userId
 	 */
-	public long  getUserId() {
+	public long getUserId() {
 		return userId;
 	}
 
 	/**
-	 * @param userId the userId to set
+	 * @param userId
+	 *            the userId to set
 	 */
 	public void setUserId(long userId) {
 		this.userId = userId;
@@ -116,7 +121,8 @@ public class FeedbackModel extends BaseModel {
 	}
 
 	/**
-	 * @param userLogin the userLogin to set
+	 * @param userLogin
+	 *            the userLogin to set
 	 */
 	public void setUserLogin(String userLogin) {
 		this.userLogin = userLogin;
@@ -124,7 +130,7 @@ public class FeedbackModel extends BaseModel {
 
 	/**
 	 * Adds a record
-	 *
+	 * 
 	 * @return
 	 * @throws ApplicationException
 	 */
@@ -136,21 +142,23 @@ public class FeedbackModel extends BaseModel {
 			// Get auto-generated next primary key
 			pk = nextPK();
 			conn.setAutoCommit(false); // Begin transaction
-			String sql = "INSERT INTO "
-							+ getTableName()
-							+ " VALUES(?,?,?,?)";
+			String sql = "INSERT INTO ST_FEEDBACK (ID,NAME,EMAIL_ID,FEEDBACK)  VALUES(?,?,?,?)";
 
 			log.info("SQL : " + sql);
-			
+
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setLong(1, pk);
 			pstmt.setString(2, name);
 			pstmt.setString(3, emailId);
 			pstmt.setString(4, feedback);
-			
+
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+			
+			this.setId(pk);
+			updateCreatedInfo();
+			
 		} catch (Exception e) {
 			log.error("Database Exception..", e);
 			try {
@@ -171,7 +179,7 @@ public class FeedbackModel extends BaseModel {
 
 	/**
 	 * Deletes a record
-	 *
+	 * 
 	 * @throws ApplicationException
 	 */
 	public void delete() throws ApplicationException {
@@ -181,9 +189,8 @@ public class FeedbackModel extends BaseModel {
 		try {
 			conn = JDBCDataSource.getConnection();
 			conn.setAutoCommit(false); // Begin transaction
-			String sql = "DELETE FROM "
-							+ getTableName()
-							+ " WHERE ID=?";
+			String sql = "DELETE FROM ST_FEEDBACK WHERE ID=?";
+
 			log.info("SQL : " + sql);
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -210,7 +217,7 @@ public class FeedbackModel extends BaseModel {
 
 	/**
 	 * Finds record by Primary Key ( ID)
-	 *
+	 * 
 	 * @param pk
 	 * @return
 	 * @throws ApplicationException
@@ -218,9 +225,8 @@ public class FeedbackModel extends BaseModel {
 	public FeedbackModel findByPK(long pk) throws ApplicationException {
 		log.debug("Model findByPk Started");
 		StringBuffer sql = new StringBuffer(
-				"SELECT * FROM "
-							+ getTableName()
-							+ " WHERE ID=?");
+				"SELECT * FROM ST_FEEDBACK WHERE ID=?");
+
 		log.info("SQL : " + sql);
 		FeedbackModel model = null;
 		Connection conn = null;
@@ -250,26 +256,27 @@ public class FeedbackModel extends BaseModel {
 
 	/**
 	 * Updates a records
-	 *
+	 * 
 	 * @throws ApplicationException
 	 */
-	public void update(FeedbackModel model) throws ApplicationException {
+	public void update() throws ApplicationException {
 		log.debug("Model update Started");
 		Connection conn = null;
 		try {
 			conn = JDBCDataSource.getConnection();
 			conn.setAutoCommit(false); // Begin transaction
-			String sql = "UPDATE "
-							+ getTableName()
-							+ " SET NAME=?,EMAIL_ID = ?,FEEDBACK=?  WHERE ID=?";
+			String sql = "UPDATE ST_FEEDBACK  SET NAME=?,EMAIL_ID=?,FEEDBACK=?  WHERE ID=?";
+
 			log.info("SQL : " + sql);
 			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, model.getName());
-			pstmt.setString(2, model.getEmailId());
-			pstmt.setString(3, model.getFeedback());
+			pstmt.setString(1, name);
+			pstmt.setString(2, emailId);
+			pstmt.setString(3, feedback);
+			pstmt.setLong(4, id);
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+			updateModifiedInfo();
 		} catch (Exception e) {
 			log.error("Database Exception..", e);
 			try {
@@ -289,29 +296,26 @@ public class FeedbackModel extends BaseModel {
 	/**
 	 * Searches records on the basis of model NOT NULL attributes with
 	 * pagination.
-	 *
-	 *
+	 * 
+	 * 
 	 * @param pageNo
 	 * @param pageSize
 	 * @return
 	 * @throws ApplicationException
 	 */
-	public List search(FeedbackModel model, int pageNo, int pageSize)
-			throws ApplicationException {
+	public List search(int pageNo, int pageSize) throws ApplicationException {
 		log.debug("Model search Started");
 		StringBuffer sql = new StringBuffer(
-				"SELECT * FROM "
-							+ getTableName()
-							+ " WHERE 1=1 ");
+				"SELECT * FROM ST_FEEDBACK  WHERE 1=1 ");
 
 		if (id > 0) {
-			sql.append(" AND id = " + model.getId());
+			sql.append(" AND id = " + id);
 		}
-		if (name != null && model.getName().length() > 0) {
-			sql.append(" AND NAME like '" + model.getName() + "%'");
+		if (name != null && name.length() > 0) {
+			sql.append(" AND NAME like '" + name + "%'");
 		}
-		if (emailId != null && model.getEmailId().length() > 0) {
-			sql.append(" AND EMAIL_ID like '" + model.getEmailId() + "%'");
+		if (emailId != null && emailId.length() > 0) {
+			sql.append(" AND EMAIL_ID like '" + emailId + "%'");
 		}
 
 		// if page size is greater than zero then apply pagination
@@ -329,7 +333,7 @@ public class FeedbackModel extends BaseModel {
 			PreparedStatement pstmt = conn.prepareStatement(sql.toString());
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
-				model = new FeedbackModel();
+				FeedbackModel model = new FeedbackModel();
 				model.setId(rs.getLong(1));
 				model.setName(rs.getString(2));
 				model.setEmailId(rs.getString(3));
@@ -350,12 +354,12 @@ public class FeedbackModel extends BaseModel {
 
 	/**
 	 * Searches records on the basis of model NOT NULL attributes
-	 *
+	 * 
 	 * @return
 	 * @throws ApplicationException
 	 */
 	public List search(FeedbackModel model) throws ApplicationException {
-		return search(model, 0, 0);
+		return search(0, 0);
 	}
 
 	/**

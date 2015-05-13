@@ -9,16 +9,10 @@
 <jsp:useBean id="model" class="in.co.sunrays.ocha.model.HotNewsModel"
 	scope="request"></jsp:useBean>
 
-<h1>Hot News</h1>
+<p class="st-title">Hot News</p>
 
-<H2>
-	<font color="green"> <%=ServletUtility.getSuccessMessage(request)%>
-	</font>
-</H2>
-<H2>
-	<font color="red"> <%=ServletUtility.getErrorMessage(request)%>
-	</font>
-</H2>
+<%=HTMLUtility.getSuccessMessage(request)%>
+<%=HTMLUtility.getErrorMessage(request)%>
 
 <form  name="stForm"  action="<%=ORSView.HOT_NEWS_CTL%>" method="POST">
 

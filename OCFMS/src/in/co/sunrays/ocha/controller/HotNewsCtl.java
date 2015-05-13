@@ -99,7 +99,7 @@ public class HotNewsCtl extends BaseCtl {
 		model.setAuthorizedPerson(DataUtility.getString(request
 				.getParameter("authorizedPerson")));
 
-		populateDTO(model, request);
+		populateModel(model, request);
 
 		log.debug("HotNewsCtl Method populatebean Ended");
 
@@ -125,7 +125,7 @@ public class HotNewsCtl extends BaseCtl {
 		if (OP_SAVE_UP.equalsIgnoreCase(op)) {
 			try {
 				if (id > 0) {
-					model.update(model);
+					model.update();
 				} else {
 					long pk = model.add();
 					model.setId(pk);

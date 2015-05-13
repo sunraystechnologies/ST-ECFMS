@@ -8,8 +8,6 @@
 
 <%@page import="java.util.List"%>
 
-<html>
-<body>
 <div class="container">
     <div class="row">
         <div  class="col-md-2">
@@ -29,7 +27,7 @@
 				</tr>
 
 				<tr>
-					<td colspan="8"><font color="red"><%=ServletUtility.getErrorMessage(request)%></font></td>
+					<td colspan="8"><%=HTMLUtility.getErrorMessage(request)%></td>
 				</tr>
 
 				<%
@@ -64,6 +62,3 @@
 					</div>
 					</div>
 					</div>
-
-</body>
-</html>

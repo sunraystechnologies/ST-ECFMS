@@ -159,9 +159,11 @@ public class CrimeReportModel  extends BaseModel {
 			System.out.println(pk + " in ModelJDBC");
 			conn.setAutoCommit(false); // Begin transaction
 			PreparedStatement pstmt = conn
-					.prepareStatement("INSERT INTO "
-							+ getTableName()
-							+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?)");
+					.prepareStatement("INSERT INTO ST_CRIME_REPORT (ID,CR_ID,TYPE_OF_CRIME,DATE_OF_CRIME,"
+							+ "TIME,REPORT_DATE,PLACE,POLICE_STATION_NAME,"
+							+ "DETAIL,PICTURE,DOCUMENT,POLICE_ST_ID) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)");
+							
+						
 			pstmt.setLong(1, pk);
 			pstmt.setLong(2, crId);
 			pstmt.setString(3, typeOfCrime);
@@ -179,6 +181,10 @@ public class CrimeReportModel  extends BaseModel {
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+			
+			this.setId(pk);
+			updateCreatedInfo();
+		
 
 		} catch (Exception e) {
 			log.error("Database Exception..", e);
@@ -210,10 +216,8 @@ public class CrimeReportModel  extends BaseModel {
 			conn = JDBCDataSource.getConnection();
 			conn.setAutoCommit(false); // Begin transaction
 			PreparedStatement pstmt = conn
-					.prepareStatement("DELETE FROM "
-							+ getTableName()
-							+ " WHERE ID=?");
-
+					.prepareStatement("DELETE FROM ST_CRIME_REPORT  WHERE ID=?");
+		
 			pstmt.setLong(1, getId());
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
@@ -247,9 +251,8 @@ public class CrimeReportModel  extends BaseModel {
 	public CrimeReportModel findByPK(long pk) throws ApplicationException {
 		log.debug("Model findByPK Started");
 		StringBuffer sql = new StringBuffer(
-				"SELECT * FROM "
-							+ getTableName()
-							+ " WHERE ID=?");
+				"SELECT * FROM ST_CRIME_REPORT WHERE ID=?");
+							 
 		log.info("SQL : " + sql);
 		CrimeReportModel model = null;
 		Connection conn = null;
@@ -293,7 +296,7 @@ public class CrimeReportModel  extends BaseModel {
 	 * @throws DatabaseException
 	 */
 
-	public void update(CrimeReportModel model) throws ApplicationException
+	public void update() throws ApplicationException
 			 {
 		log.debug("Model update Started");
 		Connection conn = null;
@@ -310,27 +313,26 @@ public class CrimeReportModel  extends BaseModel {
 			conn.setAutoCommit(false); // Begin transaction
 
 			PreparedStatement pstmt = conn
-					.prepareStatement("UPDATE "
-							+ getTableName()
-							+ " "
-							+ "SET CR_ID= ?,TYPE_OF_CRIME = ?,DATE_OF_CRIME = ?,"
-							+ "TIME = ?,REPORT_DATE = ?,PLACE= ?,POLICE_STATION_NAME = ?,"
+					.prepareStatement("UPDATE ST_CRIME_REPORT SET CR_ID= ?,"
+							+ "TYPE_OF_CRIME = ?,DATE_OF_CRIME = ?,"
+						 	+ "TIME = ?,REPORT_DATE = ?,PLACE= ?,POLICE_STATION_NAME = ?,"
 							+ "DETAIL= ?,PICTURE= ?,DOCUMENT = ?,POLICE_ST_ID =? WHERE ID=?");
-			pstmt.setLong(1, model.getCrId());
-			pstmt.setString(2, model.getTypeOfCrime());
-			pstmt.setDate(3, new java.sql.Date(model.getDateOfCrime().getTime()));
+			pstmt.setLong(1, crId);
+			pstmt.setString(2, typeOfCrime);
+			pstmt.setDate(3, new java.sql.Date(dateOfCrime.getTime()));
 			pstmt.setDate(4, new java.sql.Date(new Date().getTime()));
-			pstmt.setDate(5, new java.sql.Date(model.getReportDate().getTime()));
-			pstmt.setString(6, model.getPlace());
-			pstmt.setString(7, model.getPoliceStationName());
-			pstmt.setString(8, model.getDetail());
-			pstmt.setString(9, model.getPicture());
-			pstmt.setString(10, model.getDocument());
-			pstmt.setLong(11, model.getPoliceStId());
-			pstmt.setLong(12, model.getId());
+			pstmt.setDate(5, new java.sql.Date(reportDate.getTime()));
+			pstmt.setString(6, place);
+			pstmt.setString(7, policeStationName);
+			pstmt.setString(8, detail);
+			pstmt.setString(9, picture);
+			pstmt.setString(10, document);
+			pstmt.setLong(11, policeStId);
+			pstmt.setLong(12, id);
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+			updateModifiedInfo();
 			
 		} catch (Exception e) {
 			log.error("Database Exception..", e);
@@ -357,7 +359,7 @@ public class CrimeReportModel  extends BaseModel {
 	 */
 
 	public List search(CrimeReportModel model) throws ApplicationException {
-		return search(model, 0, 0);
+		return search(0, 0);
 	}
 
 	/**
@@ -374,24 +376,21 @@ public class CrimeReportModel  extends BaseModel {
 	 * @throws DatabaseException
 	 */
 
-	public List search(CrimeReportModel model, int pageNo, int pageSize)
+	public List search(int pageNo, int pageSize)
 			throws ApplicationException {
 		log.debug("Model search Started");
 		StringBuffer sql = new StringBuffer(
-				"SELECT * FROM "
-							+ getTableName()
-							+ "  WHERE 1=1");
-
-		if (model != null) {
+				"SELECT * FROM ST_CRIME_REPORT  WHERE 1=1");
+							
 			if (id > 0) {
-				sql.append(" AND id = " + model.getId());
+				sql.append(" AND id = " + id);
 			}
-			if (model.getCrId() != 0 && model.getCrId() > 0) {
-				sql.append(" AND CR ID like '" + model.getCrId());
+			if (crId != 0 &&crId > 0) {
+				sql.append(" AND CR ID like '" + crId);
 			}
 			
-			if (model.getTypeOfCrime() != null && model.getTypeOfCrime().length() > 0) {
-				sql.append(" AND TYPE_OF_CRIME like '" + model.getTypeOfCrime()
+			if (typeOfCrime != null && typeOfCrime.length() > 0) {
+				sql.append(" AND TYPE_OF_CRIME like '" +typeOfCrime
 						+ "%'");
 			}
 			if (dateOfCrime != null){
@@ -403,30 +402,29 @@ public class CrimeReportModel  extends BaseModel {
 			if (reportDate != null){
 				sql.append(" AND REPORT DATE like '" + reportDate + "%'");
 			}
-			if (model.getPlace() != null && model.getPlace().length() > 0) {
-				sql.append(" AND PLACE= " + model.getPlace() + "%'");
+			if (place != null && place.length() > 0) {
+				sql.append(" AND PLACE= " + place + "%'");
 			}
-			if (model.getPoliceStationName() != null
-					&& model.getPoliceStationName().length() > 0) {
+			if (policeStationName != null
+					&& policeStationName.length() > 0) {
 				sql.append(" AND POLICE STATION NAME like '"
-						+ model.getPoliceStationName() + "%'");
+						+ policeStationName + "%'");
 			}
-			if (model.getDetail() != null && model.getDetail().length() > 0) {
-				sql.append(" AND DETAIL like '" + model.getDetail() + "%'");
+			if (detail != null && detail.length() > 0) {
+				sql.append(" AND DETAIL like '" + detail + "%'");
 			}
-			if (model.getPicture() != null && model.getPicture().length() > 0) {
-				sql.append(" AND PICTURE like '" + model.getPicture());
+			if (picture != null && picture.length() > 0) {
+				sql.append(" AND PICTURE like '" + picture);
 			}
-			if (model.getDocument() != null && model.getDocument().length() > 0) {
-				sql.append(" AND DOCUMENT like '" + model.getDocument());
-			}
-
-			if (model.getPoliceStId() != 0 && model.getPoliceStId() > 0) {
-				sql.append(" AND POLICE ST ID like '" + model.getPoliceStId());
+			if (document != null && document.length() > 0) {
+				sql.append(" AND DOCUMENT like '" + document);
 			}
 
-		}
+			if (policeStId != 0 && policeStId > 0) {
+				sql.append(" AND POLICE ST ID like '" + policeStId);
+			}
 
+		
 		// if page size is greater than zero then apply pagination
 		if (pageSize > 0) {
 			// Calculate start record index
@@ -443,7 +441,7 @@ public class CrimeReportModel  extends BaseModel {
 			PreparedStatement pstmt = conn.prepareStatement(sql.toString());
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
-				model = new CrimeReportModel();
+				CrimeReportModel	model = new CrimeReportModel();
 				model.setId(rs.getLong(1));
 				model.setCrId(rs.getLong(2));
 				model.setTypeOfCrime(rs.getString(3));

@@ -1,5 +1,6 @@
 package in.co.sunrays.ocha.controller;
 
+import in.co.sunrays.common.model.UserModel;
 import in.co.sunrays.ocha.bean.UserBean;
 import in.co.sunrays.ocha.exception.ApplicationException;
 import in.co.sunrays.ocha.model.BaseModel;
@@ -79,7 +80,7 @@ public class FeedbackCtl extends BaseCtl {
 		model.setFeedback(DataUtility.getString(request
 				.getParameter("feedback")));
 
-		populateDTO(model, request);
+		populateModel(model, request);
 
 		log.debug("FeedbackCtl Method populatebean Ended");
 
@@ -105,7 +106,7 @@ public class FeedbackCtl extends BaseCtl {
 		if (OP_SAVE_UP.equalsIgnoreCase(op)) {
 			try {
 				if (id > 0) {
-					model.update(model);
+					model.update();
 				} else {
 					long pk = model.add();
 					model.setId(pk);
@@ -160,13 +161,13 @@ public class FeedbackCtl extends BaseCtl {
 				return;
 			}
 		} else {
-			UserBean userBean = (UserBean) request.getSession().getAttribute(
+			UserModel userModel = (UserModel) request.getSession().getAttribute(
 					"user");
-			model.setName(userBean.getFirstName() + " "
-					+ userBean.getLastName());
-			model.setUserId(userBean.getId());
-			model.setUserLogin(userBean.getLogin());
-			model.setEmailId(userBean.getLogin());
+			model.setName(userModel.getFirstName() + " "
+					+ userModel.getLastName());
+			model.setUserId(userModel.getId());
+			model.setUserLogin(userModel.getLogin());
+			model.setEmailId(userModel.getLogin());
 		}
 		ServletUtility.forwardView(ORSView.FEEDBACK_VIEW, request, response);
 	}

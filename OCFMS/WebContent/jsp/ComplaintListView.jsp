@@ -6,12 +6,13 @@
 <%@page import="in.co.sunrays.util.ServletUtility"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Iterator"%>
+<%@page import="in.co.sunrays.util.HTMLUtility"%>
 <h3>
 	| <a href="<%=ORSView.COMPLAINT_CTL%>">Complaint</b></a> | <a
 		href="<%=ORSView.COMPLAINT_LIST_CTL%>">Complaint List</a> |
 </h3>
 <hr>
-<h1>Complaint List</h1>
+<p class="st-title">Complaint List</p>
 
 <form action="<%=ORSView.COMPLAINT_LIST_CTL%>">
 	<table width="100%">
@@ -42,7 +43,7 @@
 			<th>Edit</th>
 		</tr>
 		<tr>
-			<td colspan="8"><font color="red"><%=ServletUtility.getErrorMessage(request)%></font></td>
+			<td colspan="8"><%=HTMLUtility.getErrorMessage(request)%></td>
 		</tr>
 		<%
 			int pageNo = ServletUtility.getPageNo(request);

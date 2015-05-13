@@ -1,13 +1,17 @@
 package in.co.sunrays.ocha.model;
 
+import in.co.sunrays.ocha.model.BaseModel;
 import in.co.sunrays.ocha.bean.DropdownListBean;
+import in.co.sunrays.ocha.exception.ApplicationException;
 import in.co.sunrays.ocha.exception.DatabaseException;
+import in.co.sunrays.util.DataUtility;
 import in.co.sunrays.util.JDBCDataSource;
 
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import org.apache.log4j.Logger;
@@ -145,5 +149,96 @@ public abstract class BaseModel implements Serializable, DropdownListBean,
 	 * @return
 	 */
 	public abstract String getTableName();
+	
+	/**
+	 * Updates created by info
+	 * 
+	 * @throws Exception
+	 */
+	public void updateCreatedInfo() {
+		
+		log.debug("Model update Started..." +  createdBy);
+
+		Connection conn = null;
+
+		String sql = "UPDATE " + getTableName()
+				+ " SET CREATED_BY=?, CREATED_DATETIME=? WHERE ID=?";
+		log.debug(sql);
+
+		try {
+			conn = JDBCDataSource.getConnection();
+			conn.setAutoCommit(false); // Begin transaction
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, createdBy);
+			pstmt.setTimestamp(2, DataUtility.getCurrentTimestamp());
+			pstmt.setLong(3, id);
+		
+			pstmt.executeUpdate();
+			conn.commit(); // End transaction
+			pstmt.close();
+		} catch (SQLException e) {
+			log.error("Database Exception..", e);
+			JDBCDataSource.trnRollback(conn);
+			try {
+				throw new ApplicationException(e);
+			} catch (ApplicationException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} finally {
+			JDBCDataSource.closeConnection(conn);
+		}
+		log.debug("Model update End");
+	}
+
+	/**
+	 * Updates modified by info
+	 * 
+	 * @param model
+	 * @throws Exception
+	 */
+	public void updateModifiedInfo() {
+
+		log.debug("Model update Started");
+		Connection conn = null;
+
+		String sql = "UPDATE " + getTableName()
+				+ " SET MODIFIED_BY=?, MODIFIED_DATETIME=? WHERE ID=?";
+
+		try {
+			conn = JDBCDataSource.getConnection();
+			conn.setAutoCommit(false); // Begin transaction
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, modifiedBy);
+			pstmt.setTimestamp(2, DataUtility.getCurrentTimestamp());
+			pstmt.setLong(3, id);
+			pstmt.executeUpdate();
+			conn.commit(); // End transaction
+			pstmt.close();
+		} catch (SQLException e) {
+			log.error("Database Exception..", e);
+			JDBCDataSource.trnRollback(conn);
+		} finally {
+			JDBCDataSource.closeConnection(conn);
+		}
+		log.debug("Model update End");
+	}
+
+	/**
+	 * Populate Model from ResultSet
+	 * 
+	 * @param model
+	 * @param rs
+	 * @return
+	 */
+	protected <T extends BaseModel> T populateModel(T model, ResultSet rs)
+			throws SQLException {
+		model.setId(rs.getLong("ID"));
+		model.setCreatedBy(rs.getString("CREATED_BY"));
+		model.setModifiedBy(rs.getString("MODIFIED_BY"));
+		model.setCreatedDatetime(rs.getTimestamp("CREATED_DATETIME"));
+		model.setModifiedDatetime(rs.getTimestamp("MODIFIED_DATETIME"));
+		return model;
+	}
 
 }

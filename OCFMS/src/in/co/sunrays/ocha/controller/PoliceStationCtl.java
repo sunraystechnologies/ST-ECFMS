@@ -1,12 +1,12 @@
 package in.co.sunrays.ocha.controller;
 
 import in.co.sunrays.ocha.bean.BaseBean;
+
 import in.co.sunrays.ocha.bean.StudentBean;
 import in.co.sunrays.ocha.exception.ApplicationException;
 import in.co.sunrays.ocha.exception.DuplicateRecordException;
 import in.co.sunrays.ocha.model.MostWantedModel;
 import in.co.sunrays.ocha.model.PoliceStationModel;
-import in.co.sunrays.ocha.model.StudentModel;
 import in.co.sunrays.util.DataUtility;
 import in.co.sunrays.util.DataValidator;
 import in.co.sunrays.util.PropertyReader;
@@ -40,7 +40,7 @@ public class PoliceStationCtl extends BaseCtl {
 		 PoliceStationModel model = new PoliceStationModel();
 		
 		 try {
-				List l = model.search(null);
+				List l = model.search();
 				request.setAttribute("roleList", l);
 			} catch (ApplicationException e) {
 				log.error(e);
@@ -99,7 +99,7 @@ public class PoliceStationCtl extends BaseCtl {
 		model.setContactNo(DataUtility.getString(request
 				.getParameter("contactNo")));
 
-		populateDTO(model, request);
+		populateModel(model, request);
 
 		log.debug("PoliceStationtCtl Method populatemodel Ended");
 
@@ -126,7 +126,7 @@ public class PoliceStationCtl extends BaseCtl {
 		if (OP_SAVE_UP.equalsIgnoreCase(op)) {
 			try {
 				if (id > 0) {
-					model.update(model);
+					model.update();
 				} else {
 					long pk = model.add();
 					model.setId(pk);

@@ -7,6 +7,8 @@
 <%@page import="in.co.sunrays.ocha.model.MissingPersonModel"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Iterator"%>
+<%@page import="in.co.sunrays.util.HTMLUtility"%>
+<%@page import="in.co.sunrays.util.AccessUtility"%>
 
 <h3>
 	| <a href="<%=ORSView.MISSINGPERSON_CTL%>">Missing Person</b></a> | <a
@@ -14,7 +16,7 @@
 </h3>
 <hr>
 
-<h1>Missing Person List</h1>
+<p class="st-title">Missing Person List</p>
 
 <form action="<%=ORSView.MISSINGPERSON_LIST_CTL%>">
 
@@ -44,10 +46,11 @@
 			<th>Area Of Missing</th>
 			<th>Report Id</th>
 			<th>Photo</th>
+			<th>Edit</th>
 			<th></th>
 		</tr>
 		<tr>
-			<td colspan="15"><font color="red"><%=ServletUtility.getErrorMessage(request)%></font></td>
+			<td colspan="15"><%=HTMLUtility.getErrorMessage(request)%></td>
 		</tr>
 		<%
 			int pageNo = ServletUtility.getPageNo(request);
@@ -80,12 +83,13 @@
 
 			<td>
 				<%
-					if (ServletUtility.getRole(request) > AppRoles.USER) {
-				%> <a href="MissingPersonCtl?id=<%=bean.getId()%>">Edit</a> <%
- 	}
- %>
-			</td>
+					String label = (AccessUtility.canWrite(request)) ? "Edit"
+								: "View";
+			
+			%> <a href="<%=ORSView.MISSINGPERSON_CTL%>?id=<%=bean.getId()%>"><%=label%></a>
 
+
+			</td>
 
 		</tr>
 

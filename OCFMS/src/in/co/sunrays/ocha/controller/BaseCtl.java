@@ -1,8 +1,11 @@
 package in.co.sunrays.ocha.controller;
 
+import in.co.sunrays.common.model.UserModel;
 import in.co.sunrays.ocha.bean.BaseBean;
 import in.co.sunrays.ocha.bean.UserBean;
+import in.co.sunrays.ocha.model.AppRoles;
 import in.co.sunrays.ocha.model.BaseModel;
+import in.co.sunrays.util.AccessUtility;
 import in.co.sunrays.util.DataUtility;
 import in.co.sunrays.util.DataValidator;
 import in.co.sunrays.util.ServletUtility;
@@ -67,15 +70,29 @@ public abstract class BaseCtl extends HttpServlet {
 	}
 
 	/**
-	 * Populates bean object from request parameters
+	 * Populates generic attributes in Model object from request parameters
 	 * 
 	 * @param request
 	 * @return
 	 */
-	protected BaseBean populateBean(HttpServletRequest request) {
-		return null;
-	}
 
+	protected <T extends BaseModel> T populateModel(T model,
+			HttpServletRequest request) {
+
+		model.setCreatedBy("root");
+		model.setModifiedBy("root");
+		
+		if (ServletUtility.isLoggedIn(request)) {
+			UserModel userbean = ServletUtility.getUserModel(request);
+			if(model.getId() > 0){
+				model.setModifiedBy(userbean.getLogin());
+			}else{
+				model.setCreatedBy(userbean.getLogin());
+			}
+		}
+		return model;
+	}
+	
 	/**
 	 * Populates bean object from request parameters
 	 * 
@@ -86,101 +103,33 @@ public abstract class BaseCtl extends HttpServlet {
 		return null;
 	}
 
-	/**
-	 * Populates Generic attributes in DTO
-	 * 
-	 * @param dto
-	 * @param request
-	 * @return
-	 */
-	protected <T extends BaseBean> T populateDTO(T dto,
-			HttpServletRequest request) {
-
-		String createdBy = request.getParameter("createdBy");
-		String modifiedBy = null;
-
-		UserBean userbean = (UserBean) request.getSession()
-				.getAttribute("user");
-
-		if (userbean == null) {
-			// If record is created without login
-			createdBy = "root";
-			modifiedBy = "root";
-		} else {
-
-			modifiedBy = userbean.getLogin();
-
-			// If record is created first time
-			if ("null".equalsIgnoreCase(createdBy)
-					|| DataValidator.isNull(createdBy)) {
-				createdBy = modifiedBy;
-			}
-
-		}
-
-		dto.setCreatedBy(createdBy);
-		dto.setModifiedBy(modifiedBy);
-
-		long cdt = DataUtility.getLong(request.getParameter("createdDatetime"));
-
-		if (cdt > 0) {
-			dto.setCreatedDatetime(DataUtility.getTimestamp(cdt));
-		} else {
-			dto.setCreatedDatetime(DataUtility.getCurrentTimestamp());
-		}
-
-		dto.setModifiedDatetime(DataUtility.getCurrentTimestamp());
-
-		return dto;
-	}
 
 	/**
-	 * Populates Generic attributes in DTO
+	 * Returns the VIEW page of this Controller
 	 * 
-	 * @param dto
-	 * @param request
 	 * @return
 	 */
-	protected <T extends BaseModel> T populateDTO(T dto,
-			HttpServletRequest request) {
+	protected abstract String getView();
 
-		String createdBy = request.getParameter("createdBy");
-		String modifiedBy = null;
+	/**
+	 * Set Access Permission
+	 */
+	protected void setAccess(HttpServletRequest request) {
 
-		UserBean userbean = (UserBean) request.getSession()
-				.getAttribute("user");
+		AccessUtility.setReadAccess(AppRoles.GUEST + "" + AppRoles.USER + ""
+				+ AppRoles.INSPECTOR + "" + AppRoles.COMMISSIONER+"" + AppRoles.ADMIN, request);
 
-		if (userbean == null) {
-			// If record is created without login
-			createdBy = "root";
-			modifiedBy = "root";
-		} else {
+		AccessUtility.setWriteAccess(AppRoles.GUEST  + "" + AppRoles.USER + ""
+				+ AppRoles.INSPECTOR + "" + AppRoles.COMMISSIONER+"" + AppRoles.ADMIN, request);
 
-			modifiedBy = userbean.getLogin();
+		AccessUtility.setAddAccess(AppRoles.GUEST + "" + AppRoles.USER + ""
+				+ AppRoles.INSPECTOR + "" + AppRoles.COMMISSIONER+"" + AppRoles.ADMIN, request);
 
-			// If record is created first time
-			if ("null".equalsIgnoreCase(createdBy)
-					|| DataValidator.isNull(createdBy)) {
-				createdBy = modifiedBy;
-			}
+		AccessUtility.setDeleteAccess("" + AppRoles.ADMIN, request);
 
-		}
-
-		dto.setCreatedBy(createdBy);
-		dto.setModifiedBy(modifiedBy);
-
-		long cdt = DataUtility.getLong(request.getParameter("createdDatetime"));
-
-		if (cdt > 0) {
-			dto.setCreatedDatetime(DataUtility.getTimestamp(cdt));
-		} else {
-			dto.setCreatedDatetime(DataUtility.getCurrentTimestamp());
-		}
-
-		dto.setModifiedDatetime(DataUtility.getCurrentTimestamp());
-
-		return dto;
 	}
+
+
 
 	@Override
 	protected void service(HttpServletRequest request,
@@ -203,8 +152,8 @@ public abstract class BaseCtl extends HttpServlet {
 			// messages
 
 			if (!validate(request)) {
-				BaseBean bean = (BaseBean) populateBean(request);
-				ServletUtility.setBean(bean, request);
+				BaseModel model = (BaseModel) populateModel(request);
+				ServletUtility.setModel(model, request);
 				ServletUtility.forwardView(getView(), request, response);
 				return;
 			}
@@ -212,11 +161,6 @@ public abstract class BaseCtl extends HttpServlet {
 		super.service(request, response);
 	}
 
-	/**
-	 * Returns the VIEW page of this Controller
-	 * 
-	 * @return
-	 */
-	protected abstract String getView();
-
+	
+	
 }

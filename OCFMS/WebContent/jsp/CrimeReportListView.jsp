@@ -6,6 +6,7 @@
 <%@page import="in.co.sunrays.ocha.model.CrimeReportModel"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Iterator"%>
+<%@page import="in.co.sunrays.util.HTMLUtility"%>
 <jsp:useBean id="model"
 	class="in.co.sunrays.ocha.model.CrimeReportModel" scope="request"></jsp:useBean>
 <h3>
@@ -13,7 +14,7 @@
 		href="<%=ORSView.CRIMEREPORT_LIST_CTL%>">Crime Report List</a> |
 </h3>
 <hr>
-<h1>Crime Report List</h1>
+<p class="st-title">Crime Report List</p>
 
 <form action="<%=ORSView.CRIMEREPORT_LIST_CTL%>">
 
@@ -40,11 +41,11 @@
 			<th>Detail</th>
 			<th>Picture</th>
 			<th>Document</th>
-			<th>Polics St Id</th>
+			<th>Police St Id</th>
 			<th>Edit</th>
 		</tr>
 		<tr>
-			<td colspan="11"><font color="red"><%=ServletUtility.getErrorMessage(request)%></font></td>
+			<td colspan="11"><%=HTMLUtility.getErrorMessage(request)%></td>
 		</tr>
 		<%
 			int pageNo = ServletUtility.getPageNo(request);

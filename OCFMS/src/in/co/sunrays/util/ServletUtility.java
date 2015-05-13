@@ -1,12 +1,12 @@
 package in.co.sunrays.util;
 
+import in.co.sunrays.common.model.UserModel;
+import in.co.sunrays.common.model.RoleModel;
 import in.co.sunrays.ocha.bean.BaseBean;
-import in.co.sunrays.ocha.bean.UserBean;
 import in.co.sunrays.ocha.controller.BaseCtl;
 import in.co.sunrays.ocha.controller.ORSView;
 import in.co.sunrays.ocha.model.AppRoles;
 import in.co.sunrays.ocha.model.BaseModel;
-
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
@@ -87,7 +87,7 @@ public class ServletUtility {
 	public static void handleException(Exception e, HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ServletException {
 		request.setAttribute("exception", e);
-		response.sendRedirect(ORSView.ERROR_VIEW);
+		response.sendRedirect(ORSView.ERROR_CTL);
 
 	}
 
@@ -114,6 +114,7 @@ public class ServletUtility {
 	/**
 	 * returns all input error messages
 	 * 
+	 * @deprecated Use HTMLUtil method instead
 	 * @param request
 	 * @return
 	 */
@@ -168,13 +169,15 @@ public class ServletUtility {
 	 * @return
 	 */
 	public static String getErrorMessage(HttpServletRequest request) {
+
 		String val = (String) request.getAttribute(BaseCtl.MSG_ERROR);
+
 		if (val == null) {
-			return "";
-		} else {
+			val = request.getParameter(BaseCtl.MSG_ERROR);
+		}
+		val = (val == null) ? "" : val;
 			return val;
 		}
-	}
 
 	/**
 	 * Sets success message to request
@@ -213,6 +216,53 @@ public class ServletUtility {
 
 	public static void setModel(BaseModel model, HttpServletRequest request) {
 		request.setAttribute("model", model);
+	}
+
+	/**
+	 * Set User Model in the session after login
+	 * 
+	 * @param model
+	 * @param request
+	 */
+	public static void setUserModel(UserModel model, HttpServletRequest request) {
+		request.getSession().setAttribute("user", model);
+	}
+
+	/**
+	 * gets UserModel from the session
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public static UserModel getUserModel(HttpServletRequest request) {
+		return (UserModel) request.getSession().getAttribute("user");
+	}
+
+	/**
+	 * Checkes if user is logged in
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public static boolean isLoggedIn(HttpServletRequest request) {
+		UserModel model = (UserModel) request.getSession().getAttribute("user");
+		return model != null;
+	}
+
+	/**
+	 * Returns logged in user role
+	 * 
+	 * @param request
+	 * @return
+	 */
+
+	public static long getRole(HttpServletRequest request) {
+		UserModel model = (UserModel) request.getSession().getAttribute("user");
+		if (model != null) {
+			return model.getRoleId();
+		} else {
+			return AppRoles.GUEST;
+		}
 	}
 
 	/**
@@ -309,21 +359,5 @@ public class ServletUtility {
 		return (int) request.getAttribute("pageSize");
 	}
 
-	/**
-	 * Returns Role of logged in User
-	 * 
-	 * @param request
-	 * @return
-	 */
-
-	public static long getRole(HttpServletRequest request) {
-
-		UserBean bean = (UserBean) request.getSession().getAttribute("user");
-		if (bean != null) {
-			return bean.getRoleId();
-		} else {
-			return AppRoles.GUEST;
-		}
-	}
 
 }

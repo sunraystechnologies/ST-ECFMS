@@ -94,7 +94,7 @@ public class CrimeReportListCtl extends BaseCtl {
 							"Select at least one record", request);
 				}
 			}
-			list = model.search(model, pageNo, pageSize);
+			list = model.search(pageNo, pageSize);
 			ServletUtility.setList(list, request);
 			if (list == null || list.size() == 0) {
 				ServletUtility.setErrorMessage("No record found ", request);

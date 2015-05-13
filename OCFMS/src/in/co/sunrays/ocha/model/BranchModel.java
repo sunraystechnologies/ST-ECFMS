@@ -192,23 +192,20 @@ public class BranchModel extends BaseModel {
 	 * @return
 	 * @throws ApplicationException
 	 */
-	public List search(BranchModel model, int pageNo, int pageSize)
+	public List search(int pageNo, int pageSize)
 			throws ApplicationException {
 		log.debug("Model search Started");
 		StringBuffer sql = new StringBuffer(
 				"SELECT * FROM " + getTableName()
 				+ " WHERE 1=1");
 
-		if (model != null) {
+		
 			if (id > 0) {
 				sql.append(" AND id = " + id);
 			}
 			if (branchName != null && branchName.length() > 0) {
 				sql.append(" AND BRANCH_NAME like '" + branchName + "%'");
 			}
-
-
-		}
 
 		// if page size is greater than zero then apply pagination
 		if (pageSize > 0) {
@@ -227,7 +224,7 @@ public class BranchModel extends BaseModel {
 			PreparedStatement pstmt = conn.prepareStatement(sql.toString());
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
-				model = new BranchModel();
+				BranchModel	model = new BranchModel();
 				model.setId(rs.getLong(1));
 				model.setBranchName(rs.getString(2));
 
@@ -253,7 +250,7 @@ public class BranchModel extends BaseModel {
 	 * @throws ApplicationException
 	 */
 	public List search(BranchModel model) throws ApplicationException {
-		return search(model, 0, 0);
+		return search(0, 0);
 	}
 	
 	public String getBranchName() {

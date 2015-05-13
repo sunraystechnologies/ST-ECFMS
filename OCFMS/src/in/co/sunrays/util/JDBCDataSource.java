@@ -1,7 +1,10 @@
 package in.co.sunrays.util;
 
+import in.co.sunrays.ocha.exception.ApplicationException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
+
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /**
@@ -65,7 +68,7 @@ public class JDBCDataSource {
 	 * 
 	 * @return connection
 	 */
-	public static Connection getConnection() throws Exception {
+	public static Connection getConnection() throws SQLException  {
 		return getInstance().cpds.getConnection();
 	}
 
@@ -84,4 +87,27 @@ public class JDBCDataSource {
 		}
 	}
 
-}
+	/**
+	 * Rollback Transaction
+	 * 
+	 * @param connection
+	 * @throws SQLException
+	 */
+	public static void trnRollback(Connection connection) {
+		if (connection != null) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+				try {
+					throw new ApplicationException(ex);
+				} catch (ApplicationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	}
+
+

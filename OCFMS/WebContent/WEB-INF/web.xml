@@ -6,7 +6,7 @@
 	<display-name>Online Result System 3</display-name>
 	<servlet>
 		<servlet-name>UserCtl</servlet-name>
-		<servlet-class>in.co.sunrays.ocha.controller.UserCtl</servlet-class>
+		<servlet-class>in.co.sunrays.common.controller.UserCtl</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -15,7 +15,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>UserListCtl</servlet-name>
-		<servlet-class>in.co.sunrays.ocha.controller.UserListCtl</servlet-class>
+		<servlet-class>in.co.sunrays.common.controller.UserListCtl</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>UserListCtl</servlet-name>
@@ -23,7 +23,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>UserRegistrationCtl</servlet-name>
-		<servlet-class>in.co.sunrays.ocha.controller.UserRegistrationCtl</servlet-class>
+		<servlet-class>in.co.sunrays.common.controller.UserRegistrationCtl</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>UserRegistrationCtl</servlet-name>
@@ -31,7 +31,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>LoginCtl</servlet-name>
-		<servlet-class>in.co.sunrays.ocha.controller.LoginCtl</servlet-class>
+		<servlet-class>in.co.sunrays.common.controller.LoginCtl</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>LoginCtl</servlet-name>
@@ -63,7 +63,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>RoleCtl</servlet-name>
-		<servlet-class>in.co.sunrays.ocha.controller.RoleCtl</servlet-class>
+		<servlet-class>in.co.sunrays.common.controller.RoleCtl</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>RoleCtl</servlet-name>
@@ -71,7 +71,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>RoleListCtl</servlet-name>
-		<servlet-class>in.co.sunrays.ocha.controller.RoleListCtl</servlet-class>
+		<servlet-class>in.co.sunrays.common.controller.RoleListCtl</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>RoleListCtl</servlet-name>
@@ -79,7 +79,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>ChangePasswordCtl</servlet-name>
-		<servlet-class>in.co.sunrays.ocha.controller.ChangePasswordCtl</servlet-class>
+		<servlet-class>in.co.sunrays.common.controller.ChangePasswordCtl</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ChangePasswordCtl</servlet-name>
@@ -87,7 +87,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>MyProfileCtl</servlet-name>
-		<servlet-class>in.co.sunrays.ocha.controller.MyProfileCtl</servlet-class>
+		<servlet-class>in.co.sunrays.common.controller.MyProfileCtl</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>MyProfileCtl</servlet-name>
@@ -95,11 +95,19 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>ForgetPasswordCtl</servlet-name>
-		<servlet-class>in.co.sunrays.ocha.controller.ForgetPasswordCtl</servlet-class>
+		<servlet-class>in.co.sunrays.common.controller.ForgetPasswordCtl</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ForgetPasswordCtl</servlet-name>
 		<url-pattern>/ForgetPasswordCtl</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>ErrorCtl</servlet-name>
+		<servlet-class>in.co.sunrays.common.controller.ErrorCtl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ErrorCtl</servlet-name>
+		<url-pattern>/ErrorCtl</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>NoticeCtl</servlet-name>
@@ -342,6 +350,10 @@
 		<servlet-name>PoliceStationListCtl</servlet-name>
 		<url-pattern>/ctl/PoliceStationListCtl</url-pattern>
 	</servlet-mapping>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/common/Error404.jsp</location>
+	</error-page>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>LoginCtl</welcome-file>

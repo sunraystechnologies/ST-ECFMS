@@ -11,17 +11,10 @@
 <jsp:useBean id="model"
 	class="in.co.sunrays.ocha.model.PoliceStationModel" scope="request"></jsp:useBean>
 
-<h1>Police Station</h1>
+<p class="st-title">Police Station</p>
 
-<H2>
-	<font color="green"> <%=ServletUtility.getSuccessMessage(request)%>
-	</font>
-</H2>
-
-<H2>
-	<font color="red"> <%=ServletUtility.getErrorMessage(request)%>
-	</font>
-</H2>
+<%=HTMLUtility.getSuccessMessage(request)%>
+<%=HTMLUtility.getErrorMessage(request)%>
 <form action="<%=ORSView.POLICESTATION_CTL%>" method="POST">
 
 	<input type="hidden" name="id" value="<%=model.getId()%>">

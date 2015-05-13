@@ -10,12 +10,14 @@
 <%@page import="in.co.sunrays.ocha.model.PoliceStationModel"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Iterator"%>
+<%@page import="in.co.sunrays.util.HTMLUtility"%>
+<%@page import="in.co.sunrays.util.AccessUtility"%>
 
 <jsp:useBean id="model"
 	class="in.co.sunrays.ocha.model.PoliceStationModel" scope="request"></jsp:useBean>
 
 
-<h1>Police Station List</h1>
+<p class="st-title">Police Station List</p>
 
 <form action="<%=ORSView.POLICESTATION_LIST_CTL%>">
 
@@ -41,10 +43,11 @@
 			<th>Code Of Police Station</th>
 			<th>Area Covered</th>
 			<th>Contact No</th>
+			<th>Edit</th>
 			<th></th>
 		</tr>
 		<tr>
-			<td colspan="11"><font color="red"><%=ServletUtility.getErrorMessage(request)%></font></td>
+			<td colspan="11"><%=HTMLUtility.getErrorMessage(request)%></td>
 		</tr>
 		<%
 			int pageNo = ServletUtility.getPageNo(request);
@@ -67,10 +70,12 @@
 
 			<td>
 				<%
-					if (ServletUtility.getRole(request) > AppRoles.USER) {
-				%> <a href="PoliceStationCtl?id=<%=bean.getId()%>">Edit</a> <%
- 	}
- %>
+					String label = (AccessUtility.canWrite(request)) ? "Edit"
+								: "View";
+			
+			%> <a href="<%=ORSView.POLICESTATION_CTL%>?id=<%=model.getId()%>"><%=label%></a>
+
+
 			</td>
 		</tr>
 

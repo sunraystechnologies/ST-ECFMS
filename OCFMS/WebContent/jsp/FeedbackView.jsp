@@ -7,40 +7,35 @@
 <%@page import="in.co.sunrays.util.HTMLUtility"%>
 <%@page import="in.co.sunrays.util.DataUtility"%>
 <%@page import="in.co.sunrays.util.ServletUtility"%>
+<%@page import="in.co.sunrays.common.model.UserModel"%>
 
 <jsp:useBean id="model" class="in.co.sunrays.ocha.model.FeedbackModel"
 	scope="request" />
+	
 <h3>
 	| <a href="<%=ORSView.FEEDBACK_CTL%>">Feedback</b></a> | <a
 		href="<%=ORSView.FEEDBACK_LIST_CTL%>">Feedback List</a> |
 </h3>
 <hr>
-<h1>Feedback</h1>
+<p class="st-title">Feedback</p>
 
-<H2>
-	<font color="green"> <%=ServletUtility.getSuccessMessage(request)%>
-	</font>
-</H2>
-<H2>
-	<font color="red"> <%=ServletUtility.getErrorMessage(request)%>
-	</font>
-</H2>
-
+<%=HTMLUtility.getSuccessMessage(request)%>
+<%=HTMLUtility.getErrorMessage(request)%>
 <%
-	UserBean userBean = (UserBean) session.getAttribute("user");
+	UserModel userModel = (UserModel) session.getAttribute("user");
 %>
 <form action="<%=ORSView.FEEDBACK_CTL%>" method="POST">
-	<input type="hidden" name="emailId" value="<%=userBean.getLogin()%>">
-	<input type="hidden" name="name" value="<%=userBean.getFirstName()%>">
-
+	<input type="hidden" name="emailId" value="<%=userModel.getLogin()%>">
+	<input type="hidden" name="name" value="<%=userModel.getFirstName()%>">
+<input type="hidden" name="id" value="<%=model.getId()%>">
 	<table>
 		<tr>
 			<th>Name</th>
-			<td><%=userBean.getFirstName()%>
+			<td><%=userModel.getFirstName()%>
 		</tr>
 		<tr>
 			<th>Email Id</th>
-			<td><%=userBean.getLogin()%>
+			<td><%=userModel.getLogin()%>
 		</tr>
 
 		<tr>

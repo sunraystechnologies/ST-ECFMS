@@ -2,13 +2,13 @@
 <%@page import="java.io.File"%>
 <%@page import="java.util.ResourceBundle"%>
 <%@page import="in.co.sunrays.ocha.controller.ORSView"%>
-<%@page import="in.co.sunrays.ocha.model.NoticeModel"%>
+
 <%@page import="java.util.Iterator"%>
 <%@page import="java.util.List"%>
-<%@page import="in.co.sunrays.ocha.controller.LoginCtl"%>
+<%@page import="in.co.sunrays.common.controller.LoginCtl"%>
 <%@page import="in.co.sunrays.util.DataUtility"%>
 <%@page import="in.co.sunrays.util.ServletUtility"%>
-
+<%@page import="in.co.sunrays.util.HTMLUtility"%>
 
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
@@ -39,11 +39,9 @@
 				style="font-size: 25pt;">Login</span>
 		</div>
 
-		<h1>Login</h1>
+		<p class="st-title">>Login</p>
 
-		<h3 >
-			<font color="red"> <%=ServletUtility.getErrorMessage(request)%></font>
-		</h3>
+		<%=HTMLUtility.getErrorMessage(request)%>
 
 		<form action="<%=ORSView.LOGIN_CTL%>" class="form-horizontal">
 			'

@@ -10,13 +10,14 @@
 <%@page import="in.co.sunrays.ocha.model.HotNewsModel"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Iterator"%>
-
+<%@page import="in.co.sunrays.util.HTMLUtility"%>
+<%@page import="in.co.sunrays.util.AccessUtility"%>
 
 <jsp:useBean id="model" class="in.co.sunrays.ocha.model.HotNewsModel"
 	scope="request"></jsp:useBean>
 
 
-<h1>HotNews List</h1>
+<p class="st-title">HotNews List</p>
 
 <form action="<%=ORSView.HOT_NEWS_LIST_CTL%>">
 
@@ -39,11 +40,12 @@
 			<th>Declared Date</th>
 			<th>Time</th>
 			<th>AuthorizedPerson</th>
+			<th>Edit</th>
 			<th></th>
 		</tr>
 
 		<tr>
-			<td colspan="8"><font color="red"><%=ServletUtility.getErrorMessage(request)%></font></td>
+			<td colspan="8"><%=HTMLUtility.getErrorMessage(request)%></td>
 		</tr>
 
 		<%
@@ -64,11 +66,11 @@
 			<td><%=bean.getAuthorizedPerson()%></td>
 			<td>
 				<%
-					if (ServletUtility.getRole(request) > AppRoles.USER) {
-				%> <a href="<%=ORSView.HOT_NEWS_CTL%>?id=<%=bean.getId()%>">Edit</a>
-				<%
-					}
-				%>
+					String label = (AccessUtility.canWrite(request)) ? "Edit"
+								: "View";
+			
+			%> <a href="<%=ORSView.HOT_NEWS_CTL%>?id=<%=model.getId()%>"><%=label%></a>
+
 
 			</td>
 		</tr>

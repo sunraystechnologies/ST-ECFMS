@@ -146,23 +146,18 @@ public class MissingPersonModel extends BaseModel {
 	public long add() throws ApplicationException {
 		log.debug("Model add Started");
 		Connection conn = null;
-
-		// get College Name
-		// CollegeModel cModel = new CollegeModel();
-		// CollegeBean collegeBean = cModel.findByPK(bean.getCollegeId());
-		// bean.setCollegeName(collegeBean.getName());
-
 		long pk = 0;
 		try {
 			conn = JDBCDataSource.getConnection();
 			pk = nextPK();
 			// Get auto-generated next primary key
-			System.out.println(pk + " in ModelJDBC");
 			conn.setAutoCommit(false); // Begin transaction
 			PreparedStatement pstmt = conn
-					.prepareStatement("INSERT INTO "
-							+ getTableName()
+					.prepareStatement("INSERT INTO ST_MISSING_PERSON (ID,POLICE_ST_ID,NAME,AGE,GENDER,HEIGHT,"
+							+ "DATE_OF_MISSING,DATE_OF_REPORTING,COMPLEXION,"
+							+ "HAIR,MARK_OF_IDENTIFICATION,AREA_OF_MISSING,REPORT_ID,PHOTO)"
 							+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+
 			pstmt.setLong(1, pk);
 			pstmt.setLong(2, policeStId);
 			pstmt.setString(3, name);
@@ -182,6 +177,10 @@ public class MissingPersonModel extends BaseModel {
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+			
+			this.setId(pk);
+			updateCreatedInfo();
+	
 
 		} catch (Exception e) {
 			log.error("Database Exception..", e);
@@ -213,9 +212,7 @@ public class MissingPersonModel extends BaseModel {
 			conn = JDBCDataSource.getConnection();
 			conn.setAutoCommit(false); // Begin transaction
 			PreparedStatement pstmt = conn
-					.prepareStatement("DELETE FROM "
-							+ getTableName()
-							+ " WHERE ID=?");
+					.prepareStatement("DELETE FROM ST_MISSING_PERSON  WHERE ID=?");
 
 			pstmt.setLong(1, getId());
 			pstmt.executeUpdate();
@@ -251,9 +248,8 @@ public class MissingPersonModel extends BaseModel {
 	public MissingPersonModel findByPK(long pk) throws ApplicationException {
 		log.debug("Model findByPK Started");
 		StringBuffer sql = new StringBuffer(
-				"SELECT * FROM "
-							+ getTableName()
-							+ " WHERE ID=?");
+				"SELECT * FROM ST_MISSING_PERSON WHERE ID=?");
+
 		log.info("SQL : " + sql);
 		MissingPersonModel model = null;
 		Connection conn = null;
@@ -302,7 +298,7 @@ public class MissingPersonModel extends BaseModel {
 	 * @throws DatabaseException
 	 */
 
-	public void update(MissingPersonModel model) throws ApplicationException {
+	public void update() throws ApplicationException {
 		log.debug("Model update Started");
 		Connection conn = null;
 		try {
@@ -312,32 +308,30 @@ public class MissingPersonModel extends BaseModel {
 			conn.setAutoCommit(false); // Begin transaction
 
 			PreparedStatement pstmt = conn
-					.prepareStatement("UPDATE "
-							+ getTableName()
-							+ " SET POLICE_ST_ID =?,NAME = ?,AGE= ?,"
+					.prepareStatement("UPDATE ST_MISSING_PERSON  SET POLICE_ST_ID =?,NAME = ?,AGE= ?,"
 							+ "GENDER = ?,HEIGHT = ?,DATE_OF_MISSING = ?,DATE_OF_REPORTING = ?,"
 							+ "COMPLEXION = ?,HAIR = ?,MARK_OF_IDENTIFICATION = ?,AREA_OF_MISSING =?,"
 							+ "REPORT_ID = ?,PHOTO= ? WHERE ID=?");
-			pstmt.setLong(1, model.getPoliceStId());
-			pstmt.setString(2, model.getName());
-			pstmt.setInt(3, model.getAge());
-			pstmt.setString(4, model.getGender());
-			pstmt.setInt(5, model.getHeight());
-			pstmt.setDate(6, new java.sql.Date(model.getDateOfMissing()
-					.getTime()));
-			pstmt.setDate(7, new java.sql.Date(model.getDateOfReporting()
-					.getTime()));
-			pstmt.setString(8, model.getComplexion());
-			pstmt.setString(9, model.getHair());
-			pstmt.setLong(10, model.getMarkOfIdentification());
-			pstmt.setString(11, model.getAreaOfMissing());
-			pstmt.setLong(12, model.getReportId());
-			pstmt.setString(13, model.getPhoto());
-			pstmt.setLong(14, model.getId());
+			pstmt.setLong(1, policeStId);
+			pstmt.setString(2, name);
+			pstmt.setInt(3, age);
+			pstmt.setString(4, gender);
+			pstmt.setInt(5, height);
+			pstmt.setDate(6, new java.sql.Date(dateOfMissing.getTime()));
+			pstmt.setDate(7, new java.sql.Date(dateOfReporting.getTime()));
+			pstmt.setString(8, complexion);
+			pstmt.setString(9, hair);
+			pstmt.setLong(10, markOfIdentification);
+			pstmt.setString(11, areaOfMissing);
+			pstmt.setLong(12, reportId);
+			pstmt.setString(13, photo);
+			pstmt.setLong(14, id);
 
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+			updateModifiedInfo();
+			
 		} catch (Exception e) {
 			log.error("Database Exception..", e);
 			try {
@@ -362,8 +356,8 @@ public class MissingPersonModel extends BaseModel {
 	 * @throws DatabaseException
 	 */
 
-	public List search(MissingPersonModel model) throws ApplicationException {
-		return search(model, 0, 0);
+	public List search() throws ApplicationException {
+		return search(0, 0);
 	}
 
 	/**
@@ -380,67 +374,55 @@ public class MissingPersonModel extends BaseModel {
 	 * @throws DatabaseException
 	 */
 
-	public List search(MissingPersonModel model, int pageNo, int pageSize)
-			throws ApplicationException {
+	public List search(int pageNo, int pageSize) throws ApplicationException {
 		log.debug("Model search Started");
-		StringBuffer sql = new StringBuffer(
-				"SELECT * FROM "
-							+ getTableName()
-							+ "  WHERE 1=1");
+		StringBuffer sql = new StringBuffer("SELECT * FROM ST_MISSING_PERSON  WHERE 1=1");
+			 
+		if (id > 0) {
+			sql.append(" AND id = " + id);
+		}
+		if (policeStId != 0 && policeStId > 0) {
+			sql.append(" AND POLICE ID like '" + policeStId);
+		}
+		if (name != null && name.length() > 0) {
+			sql.append(" AND NAME like '" + name + "%'");
 
-		if (model != null) {
+		}
+		if (age != null && age > 0) {
+			sql.append(" AND AGE like '" + age + "%'");
+		}
 
-			if (id > 0) {
-				sql.append(" AND id = " + model.getId());
-			}
-			if (model.getPoliceStId() != 0 && model.getPoliceStId() > 0) {
-				sql.append(" AND POLICE ID like '" + model.getPoliceStId());
-			}
-			if (name != null && model.getName().length() > 0) {
-				sql.append(" AND NAME like '" + model.getName() + "%'");
+		if (gender != null && gender.length() > 0) {
+			sql.append(" AND GENDER like '" + gender);
+		}
+		if (height != null && height > 0) {
+			sql.append(" AND HEIGHT like '" + height);
+		}
+		if (dateOfMissing != null) {
+			sql.append(" AND DATE_OF_MISSING like '" + dateOfMissing + "%'");
+		}
+		if (dateOfReporting != null) {
+			sql.append(" AND DATE_OF_REPORTING like '" + dateOfReporting + "%'");
+		}
+		if (complexion != null && complexion.length() > 0) {
+			sql.append(" AND COMPLEXION = " + complexion);
+		}
+		if (hair != null && hair.length() > 0) {
+			sql.append(" AND HAIR like '" + hair);
+		}
+		if (markOfIdentification != 0 && markOfIdentification > 0) {
+			sql.append(" AND MARK_OF_IDENTIFICATION like '"
+					+ markOfIdentification + "%'");
+		}
+		if (areaOfMissing != null && areaOfMissing.length() > 0) {
+			sql.append(" AND AREA OF MISSING like '" + areaOfMissing);
+		}
 
-			}
-			if (model.getAge() != null && model.getAge() > 0) {
-				sql.append(" AND AGE like '" + model.getAge() + "%'");
-			}
-
-			if (gender != null && model.getGender().length() > 0) {
-				sql.append(" AND GENDER like '" + model.getGender());
-			}
-			if (model.getHeight() != null && model.getHeight() > 0) {
-				sql.append(" AND HEIGHT like '" + model.getHeight());
-			}
-			if (dateOfMissing != null) {
-				sql.append(" AND DATE_OF_MISSING like '" + dateOfMissing + "%'");
-			}
-			if (dateOfReporting != null) {
-				sql.append(" AND DATE_OF_REPORTING like '" + dateOfReporting
-						+ "%'");
-			}
-			if (complexion != null && model.getComplexion().length() > 0) {
-				sql.append(" AND COMPLEXION = " + model.getComplexion());
-			}
-			if (model.getHair() != null && model.getHair().length() > 0) {
-				sql.append(" AND HAIR like '" + model.getHair());
-			}
-			if (model.getMarkOfIdentification() != 0
-					&& model.getMarkOfIdentification() > 0) {
-				sql.append(" AND MARK_OF_IDENTIFICATION like '"
-						+ model.getMarkOfIdentification() + "%'");
-			}
-			if (model.getAreaOfMissing() != null
-					&& model.getAreaOfMissing().length() > 0) {
-				sql.append(" AND AREA OF MISSING like '"
-						+ model.getAreaOfMissing());
-			}
-
-			if (model.getReportId() != 0 && model.getReportId() > 0) {
-				sql.append(" AND REPORT ID like '" + model.getReportId());
-			}
-			if (photo != null && model.getPhoto().length() > 0) {
-				sql.append(" AND PHOTO like '" + model.getPhoto());
-			}
-
+		if (reportId != 0 && reportId > 0) {
+			sql.append(" AND REPORT ID like '" + reportId);
+		}
+		if (photo != null && photo.length() > 0) {
+			sql.append(" AND PHOTO like '" + photo);
 		}
 
 		// if page size is greater than zero then apply pagination
@@ -459,7 +441,7 @@ public class MissingPersonModel extends BaseModel {
 			PreparedStatement pstmt = conn.prepareStatement(sql.toString());
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
-				model = new MissingPersonModel();
+				MissingPersonModel model = new MissingPersonModel();
 				model.setId(rs.getLong(1));
 				model.setPoliceStId(rs.getLong(2));
 				model.setName(rs.getString(3));

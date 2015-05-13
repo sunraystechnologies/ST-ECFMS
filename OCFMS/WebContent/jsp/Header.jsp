@@ -1,19 +1,19 @@
 <%@page import="in.co.sunrays.ocha.model.AppRoles"%>
-<%@page import="in.co.sunrays.ocha.model.RoleModel"%>
-<%@page import="in.co.sunrays.ocha.controller.LoginCtl"%>
+<%@page import="in.co.sunrays.common.model.RoleModel"%>
+<%@page import="in.co.sunrays.common.controller.LoginCtl"%>
 <%@page import="in.co.sunrays.ocha.bean.UserBean"%>
 <%@page import="in.co.sunrays.ocha.controller.ORSView"%>
-
+<%@page import="in.co.sunrays.common.model.UserModel"%>
 <%
-	UserBean userBean = (UserBean) session.getAttribute("user");
+	UserModel userModel = (UserModel) session.getAttribute("user");
 
-	boolean userLoggedIn = userBean != null;
+	boolean userLoggedIn = userModel != null;
 
 	String welcomeMsg = "Hi, ";
 
 	if (userLoggedIn) {
 		String role = (String) session.getAttribute("role");
-		welcomeMsg += userBean.getFirstName() + " (" + role + ")";
+		welcomeMsg += userModel.getFirstName() + " (" + role + ")";
 	} else {
 		welcomeMsg += "Visitor";
 	}
@@ -23,7 +23,7 @@
 
 <%
 	if (userLoggedIn) {
-		if (AppRoles.ADMIN == userBean.getRoleId() || AppRoles.INSPECTOR == userBean.getRoleId() || AppRoles.COMMISSIONER == userBean.getRoleId()  ) {
+		if (AppRoles.ADMIN == userModel.getRoleId() || AppRoles.INSPECTOR == userModel.getRoleId() || AppRoles.COMMISSIONER == userModel.getRoleId()  ) {
 %>
 <table width="100%">
 	<tr>

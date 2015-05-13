@@ -1,9 +1,9 @@
 package in.co.sunrays.ocha.controller;
 
+import in.co.sunrays.common.model.UserModel;
 import in.co.sunrays.ocha.bean.UserBean;
 import in.co.sunrays.ocha.exception.ApplicationException;
 import in.co.sunrays.ocha.model.BaseModel;
-import in.co.sunrays.ocha.model.UserModel;
 import in.co.sunrays.ocha.model.HotNewsModel;
 import in.co.sunrays.util.DataUtility;
 import in.co.sunrays.util.PropertyReader;
@@ -105,7 +105,7 @@ public class HotNewsListCtl extends BaseCtl {
 							"Select at least one record", request);
 				}
 			}
-			list = model.search(model, pageNo, pageSize);
+			list = model.search(pageNo, pageSize);
 		    System.out.println("list size"+list.size());
 			ServletUtility.setList(list, request);
 			if (list == null || list.size() == 0) {

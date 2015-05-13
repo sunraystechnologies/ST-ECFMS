@@ -7,6 +7,8 @@
 <%@page import="in.co.sunrays.ocha.model.MostWantedModel"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Iterator"%>
+<%@page import="in.co.sunrays.util.HTMLUtility"%>
+<%@page import="in.co.sunrays.util.AccessUtility"%>
 
 <jsp:useBean id="model" class="in.co.sunrays.ocha.model.MostWantedModel"
 	scope="request"></jsp:useBean>
@@ -15,7 +17,7 @@
 		href="<%=ORSView.MOSTWANTED_LIST_CTL%>">Most wanted List</a> |
 </h3>
 <hr>
-<h1>Most Wanted List</h1>
+<p class="st-title">Most Wanted List</p>
 
 <form action="<%=ORSView.MOSTWANTED_LIST_CTL%>">
 
@@ -43,11 +45,12 @@
 			<th>Height</th>
 			<th>Status</th>
 			<th>Photo</th>
-			<th>Polics St</th>
+			<th>Police St</th>
+			<th>Edit</th>
 			<th></th>
 		</tr>
 		<tr>
-			<td colspan="11"><font color="red"><%=ServletUtility.getErrorMessage(request)%></font></td>
+			<td colspan="13"><%=HTMLUtility.getErrorMessage(request)%></td>
 		</tr>
 		<%
 			int pageNo = ServletUtility.getPageNo(request);
@@ -75,11 +78,12 @@
 			<td><%=bean.getPolicsStId()%></td>
 
 			<td>
-				<%
-					if (ServletUtility.getRole(request) > AppRoles.USER) {
-				%> <a href="MostWantedCtl?id=<%=bean.getId()%>">Edit</a> <%
- 	}
- %>
+			<%
+					String label = (AccessUtility.canWrite(request)) ? "Edit"
+								: "View";
+			
+			%> <a href="<%=ORSView.MOSTWANTED_CTL%>?id=<%=model.getId()%>"><%=label%></a>
+
 
 
 			</td>

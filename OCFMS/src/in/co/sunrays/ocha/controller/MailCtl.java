@@ -1,12 +1,12 @@
 package in.co.sunrays.ocha.controller;
 
+import in.co.sunrays.common.model.UserModel;
 import in.co.sunrays.ocha.bean.UserBean;
 import in.co.sunrays.ocha.exception.ApplicationException;
 import in.co.sunrays.ocha.model.BaseModel;
 import in.co.sunrays.ocha.model.FeedbackModel;
 import in.co.sunrays.ocha.model.MailModel;
 import in.co.sunrays.ocha.model.PoliceStationModel;
-import in.co.sunrays.ocha.model.UserModel;
 import in.co.sunrays.util.DataUtility;
 import in.co.sunrays.util.DataValidator;
 import in.co.sunrays.util.PropertyReader;
@@ -48,12 +48,12 @@ public class MailCtl extends BaseCtl {
 
 		try {
 			List l = uModel.search(null);
-			Iterator<UserBean> it = l.iterator();
+			Iterator<UserModel> it = l.iterator();
 
 			while (it.hasNext()) {
-				UserBean bean = it.next();
-				String login = bean.getLogin();
-				String value = bean.getFirstName() + " " + bean.getLastName()
+				UserModel model = it.next();
+				String login = model.getLogin();
+				String value = model.getFirstName() + " " + model.getLastName()
 						+ " ( " + login + " ) ";
 				userEmails.put(login, value);
 			}
@@ -97,14 +97,14 @@ public class MailCtl extends BaseCtl {
 		model.setId(DataUtility.getLong(request.getParameter("id")));
 		model.setReceiver(DataUtility.getString(request.getParameter("to")));
 		
-		UserBean userBean = (UserBean) request.getSession().getAttribute("user");
-		model.setSender(userBean.getLogin());
+		UserModel userModel = (UserModel) request.getSession().getAttribute("user");
+		model.setSender(userModel.getLogin());
 
 		model.setDetail(DataUtility.getString(request.getParameter("detail")));
 		model.setAttachment(DataUtility.getString(request
 				.getParameter("attachment")));
 
-		populateDTO(model, request);
+		populateModel(model, request);
 
 		log.debug("MailCtl Method populatebean Ended");
 
